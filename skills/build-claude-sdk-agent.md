@@ -1,12 +1,18 @@
 ---
+name: build-claude-sdk-agent
 title: Build a Claude Agent SDK Agent
 type: skill
+topics:
+  - claude-agent-sdk
+  - python
+  - agents
+  - ai-development
 summary: >
   Step-by-step skill for building a Python agent with the Claude Agent SDK.
   Covers setup, authentication, built-in and custom tools, streaming, multi-agent, and hooks.
 references:
   - articles/agent-workflow/claude-sdk-tools.md
-last-updated:
+last-updated: 2026-06-12
 ---
 
 # Build a Claude Agent SDK Agent
@@ -15,7 +21,15 @@ Executable steps for building a Python agent using the Claude Agent SDK. Follow 
 
 ---
 
-## Phase 1: Project Setup
+## Prerequisites
+
+- Python 3.12+
+- `ANTHROPIC_API_KEY` set in environment
+- `pip install claude-agent-sdk`
+
+## Steps
+
+### Phase 1: Project Setup
 
 ### Step 1.1: Create project structure
 
@@ -54,7 +68,7 @@ export CLAUDE_CODE_USE_VERTEX=1
 
 ---
 
-## Phase 2: Basic Agent with Built-in Tools
+### Phase 2: Basic Agent with Built-in Tools
 
 ### Step 2.1: Create options with built-in tools
 
@@ -86,7 +100,7 @@ asyncio.run(main())
 
 ---
 
-## Phase 3: Custom Tools via MCP
+### Phase 3: Custom Tools via MCP
 
 ### Step 3.1: Define a custom tool
 
@@ -131,7 +145,7 @@ asyncio.run(main())
 
 ---
 
-## Phase 4: Permission Handling
+### Phase 4: Permission Handling
 
 ### Step 4.1: Choose a permission strategy
 
@@ -164,7 +178,7 @@ options = ClaudeAgentOptions(
 
 ---
 
-## Phase 5: Persistent Conversations with ClaudeSDKClient
+### Phase 5: Persistent Conversations with ClaudeSDKClient
 
 ### Step 5.1: Create a long-lived client
 
@@ -203,7 +217,7 @@ Session helpers: `list_sessions()`, `get_session_messages()`, `rename_session()`
 
 ---
 
-## Phase 6: Multi-Agent (Optional)
+### Phase 6: Multi-Agent (Optional)
 
 ### Step 6.1: Define subagents
 
@@ -231,7 +245,7 @@ The main agent can now delegate to `code-reviewer` or `test-writer` as needed. S
 
 ---
 
-## Phase 7: Hooks (Optional)
+### Phase 7: Hooks (Optional)
 
 ### Step 7.1: Add lifecycle hooks
 
@@ -264,7 +278,7 @@ Available hooks:
 
 ---
 
-## Minimal Working Example
+### Minimal Working Example
 
 Complete copy-paste starter with a custom tool:
 
@@ -313,3 +327,15 @@ if __name__ == "__main__":
 - [ ] Using `async`/`await` throughout — SDK is async-only
 - [ ] Built-in tools preferred over custom where possible
 - [ ] Event types checked before accessing content in streaming
+
+## Constraints
+
+- No hard-coded secrets — use environment variables
+- Custom tool handlers must return MCP format, not raw strings
+- SDK is async-only — use `async`/`await` throughout
+
+## Outputs
+
+- Python agent script with Claude Agent SDK integration
+- Custom MCP tool server (if tools defined)
+- Working streaming output to stdout

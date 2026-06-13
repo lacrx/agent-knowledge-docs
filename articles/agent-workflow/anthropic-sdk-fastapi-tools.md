@@ -22,7 +22,7 @@ related:
   - claude-agent-sdk-tools
   - vercel-ai-sdk-tools
   - copilot-sdk-tools
-last-updated:
+last-updated: 2026-06-12
 ---
 
 # Python FastAPI — Building AI-Powered APIs

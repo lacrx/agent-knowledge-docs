@@ -20,7 +20,7 @@ related:
   - claude-agent-sdk-tools
   - anthropic-sdk-fastapi-tools
   - copilot-sdk-tools
-last-updated:
+last-updated: 2026-06-12
 ---
 
 # Vercel AI SDK — Building AI Apps with Tools

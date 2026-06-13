@@ -5,25 +5,12 @@ topics:
   - runtime-retrieval
   - agent-workflow
   - gh-cli
-prerequisites:
-  - gh CLI installed and authenticated (`gh auth status` passes)
-  - Network access to GitHub API
-  - No local clone required
-steps:
-  - Auth check
-  - Define fetch helper
-  - Discovery workflow (quick-ref → topic-index → fallback)
-  - Fetch target content (article or skill)
-constraints:
-  - Retrieval only — never modify repository content
-  - No disk writes — all output to stdout only
-  - No cloning — use GitHub API exclusively
-  - Role separation is strict — see Role Rules table
-outputs:
-  - Raw markdown content printed to stdout
-  - Agent proceeds with retrieved context or notes "not covered"
-troubleshooting:
-  - See Troubleshooting table below
+summary: >
+  Fetch articles and skills from the knowledge base repo at runtime using gh CLI.
+  Covers auth check, discovery workflow, and content retrieval via GitHub API.
+references:
+  - QUICK-REF.md
+last-updated: 2026-06-12
 ---
 
 # Retrieve from Knowledge Base Repo
@@ -32,7 +19,15 @@ Fetch articles and skills from the shared knowledge base at runtime using only `
 
 ---
 
-## Repository Coordinates
+## Prerequisites
+
+- `gh` CLI installed and authenticated (`gh auth status` passes)
+- Network access to GitHub API
+- No local clone required
+
+## Steps
+
+### Repository Coordinates
 
 | Field    | Value                        |
 |----------|------------------------------|
@@ -43,7 +38,7 @@ Fetch articles and skills from the shared knowledge base at runtime using only `
 
 ---
 
-## Common Paths
+### Common Paths
 
 | Content Type   | Pattern                                |
 |----------------|----------------------------------------|
@@ -54,7 +49,7 @@ Fetch articles and skills from the shared knowledge base at runtime using only `
 
 ---
 
-## Step 1: Auth Check
+### Step 1: Auth Check
 
 Run `gh auth status`. Confirm logged in. Do NOT proceed without it.
 
@@ -66,7 +61,7 @@ If this fails, stop immediately. Tell the user: "gh CLI is not authenticated. Ru
 
 ---
 
-## Step 2: Define Fetch Helper
+### Step 2: Define Fetch Helper
 
 Define a shell function for retrieving raw content:
 
@@ -82,7 +77,7 @@ This returns raw markdown directly — no base64 decoding needed.
 
 ---
 
-## Step 3: Discovery Workflow
+### Step 3: Discovery Workflow
 
 Follow these steps in order to locate the right content.
 
@@ -132,7 +127,7 @@ gh api "repos/lacrx/agent-knowledge-docs/git/trees/main?recursive=1" --jq '.tree
 
 ---
 
-## Role Rules
+### Role Rules
 
 | Agent Role                   | Reads              | Purpose                                          | Does NOT                          |
 |------------------------------|--------------------|--------------------------------------------------|-----------------------------------|
@@ -144,7 +139,7 @@ Role separation is strict. Research agents gather context from articles and hand
 
 ---
 
-## Troubleshooting
+### Troubleshooting
 
 | Symptom                                  | Cause                                    | Fix                                                              |
 |------------------------------------------|------------------------------------------|------------------------------------------------------------------|
@@ -157,9 +152,14 @@ Role separation is strict. Research agents gather context from articles and hand
 
 ---
 
-## Constraints (Summary)
+## Constraints
 
 - **Retrieval only** — never push, commit, or modify content in the repo
 - **No disk writes** — output to stdout; do not save files locally
 - **No cloning** — API calls only; the repo is never checked out
 - **Role separation** — research reads articles, implementation follows skills; never cross
+
+## Outputs
+
+- Raw markdown content printed to stdout
+- Agent proceeds with retrieved context or notes "not covered"

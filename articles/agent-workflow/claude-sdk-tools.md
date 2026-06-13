@@ -18,7 +18,7 @@ aliases:
 related:
   - spec-based-development
   - anthropic-sdk-fastapi-tools
-last-updated:
+last-updated: 2026-06-12
 ---
 
 # Claude Agent SDK — Building Agents with Tools

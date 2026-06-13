@@ -1,12 +1,18 @@
 ---
+name: build-copilot-sdk-agent
 title: Build a Copilot SDK Agent
 type: skill
+topics:
+  - copilot-sdk
+  - python
+  - agents
+  - ai-development
 summary: >
   Step-by-step skill for building a Python agent with the GitHub Copilot SDK.
   Covers setup, authentication, tool definition, session creation, and streaming.
 references:
   - articles/agent-workflow/copilot-sdk-tools.md
-last-updated:
+last-updated: 2026-06-12
 ---
 
 # Build a Copilot SDK Agent
@@ -15,7 +21,15 @@ Executable steps for building a Python agent using the GitHub Copilot SDK. Follo
 
 ---
 
-## Phase 1: Project Setup
+## Prerequisites
+
+- Python 3.12+
+- `GITHUB_TOKEN` exported in environment
+- `copilot auth status` shows authenticated
+
+## Steps
+
+### Phase 1: Project Setup
 
 ### Step 1.1: Create project structure
 
@@ -49,7 +63,7 @@ export GITHUB_TOKEN="$(copilot auth token)"
 
 ---
 
-## Phase 2: Define Tools
+### Phase 2: Define Tools
 
 ### Step 2.1: Create a Pydantic model for tool parameters
 
@@ -89,7 +103,7 @@ search_tool = define_tool(
 
 ---
 
-## Phase 3: Create Client and Session
+### Phase 3: Create Client and Session
 
 ### Step 3.1: Initialize the client
 
@@ -133,7 +147,7 @@ session = client.new_session(
 
 ---
 
-## Phase 4: Send Prompts and Handle Responses
+### Phase 4: Send Prompts and Handle Responses
 
 ### Step 4.1: Blocking mode (simple)
 
@@ -158,7 +172,7 @@ async for event in session.send("Find all open P0 bugs"):
 
 ---
 
-## Phase 5: Session Resumption (Optional)
+### Phase 5: Session Resumption (Optional)
 
 ### Step 5.1: Save session ID after conversation
 
@@ -180,7 +194,7 @@ result = await resumed_session.send_and_wait("What were the results from last ti
 
 ---
 
-## Minimal Working Example
+### Minimal Working Example
 
 Complete copy-paste starter:
 
@@ -235,3 +249,15 @@ if __name__ == "__main__":
 - [ ] Pydantic models used for `params_type`
 - [ ] Permission handler set (approve_all or custom)
 - [ ] Event types checked before accessing content in streaming mode
+
+## Constraints
+
+- No hard-coded secrets — use environment variables
+- Tool handlers must return strings, not `None`
+- Requires authenticated Copilot CLI session
+
+## Outputs
+
+- Python agent script with Copilot SDK integration
+- Tool definitions with Pydantic parameter models
+- Working streaming output to stdout

@@ -1,12 +1,18 @@
 ---
+name: build-vercel-ai-sdk-agent
 title: Build a Vercel AI SDK Agent
 type: skill
+topics:
+  - vercel-ai-sdk
+  - typescript
+  - nextjs
+  - ai-development
 summary: >
   Step-by-step skill for building a Next.js AI app with the Vercel AI SDK.
   Covers setup, tool definition with Zod, streaming routes, React hooks, and structured output.
 references:
   - articles/agent-workflow/vercel-ai-sdk-tools.md
-last-updated:
+last-updated: 2026-06-12
 ---
 
 # Build a Vercel AI SDK Agent
@@ -15,7 +21,15 @@ Executable steps for building an AI-powered app using the Vercel AI SDK and Next
 
 ---
 
-## Phase 1: Project Setup
+## Prerequisites
+
+- Node.js 18+
+- `ANTHROPIC_API_KEY` (or other provider key) in `.env.local`
+- `npm install ai @ai-sdk/anthropic zod`
+
+## Steps
+
+### Phase 1: Project Setup
 
 ### Step 1.1: Create project structure
 
@@ -57,7 +71,7 @@ GOOGLE_GENERATIVE_AI_API_KEY="..."
 
 ---
 
-## Phase 2: Define Tools
+### Phase 2: Define Tools
 
 ### Step 2.1: Create tool with Zod schema
 
@@ -98,7 +112,7 @@ export const tools = {
 
 ---
 
-## Phase 3: Create API Route
+### Phase 3: Create API Route
 
 ### Step 3.1: Streaming route handler
 
@@ -147,7 +161,7 @@ export async function POST(req: Request) {
 
 ---
 
-## Phase 4: Build the Chat UI
+### Phase 4: Build the Chat UI
 
 ### Step 4.1: Basic chat component with useChat
 
@@ -200,7 +214,7 @@ export default function Chat() {
 
 ---
 
-## Phase 5: Structured Output (Optional)
+### Phase 5: Structured Output (Optional)
 
 ### Step 5.1: Generate typed objects
 
@@ -263,7 +277,7 @@ const { object, isLoading } = useObject({
 
 ---
 
-## Phase 6: Multi-Provider Support (Optional)
+### Phase 6: Multi-Provider Support (Optional)
 
 ### Step 6.1: Swap providers without code changes
 
@@ -297,7 +311,7 @@ npm install @ai-sdk/google      # Gemini
 
 ---
 
-## Phase 7: Lifecycle Hooks (Optional)
+### Phase 7: Lifecycle Hooks (Optional)
 
 ### Step 7.1: Add callbacks to streamText
 
@@ -322,7 +336,7 @@ const result = streamText({
 
 ---
 
-## Minimal Working Example
+### Minimal Working Example
 
 Complete copy-paste Next.js app:
 
@@ -392,3 +406,15 @@ export default function Chat() {
 - [ ] API route returns `result.toDataStreamResponse()`
 - [ ] Client uses `useChat()` with manual input state (AI SDK 5)
 - [ ] `inputSchema` used (not deprecated `parameters`)
+
+## Constraints
+
+- No hard-coded secrets — use `.env.local` for API keys
+- Use `inputSchema` (not deprecated `parameters`) for tool definitions
+- Zod `.describe()` required on all input fields
+
+## Outputs
+
+- Next.js API route with AI SDK streaming
+- React chat UI with `useChat()` hook
+- Tool definitions with Zod schemas
