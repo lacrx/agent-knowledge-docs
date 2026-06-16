@@ -1,0 +1,57 @@
+name: Validate and Index
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "articles/**"
+      - "skills/**"
+      - "scripts/**"
+      - "tests/**"
+  push:
+    branches: [main]
+    paths:
+      - "articles/**"
+      - "skills/**"
+      - "scripts/**"
+      - "tests/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-index:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install test dependencies
+        run: pip install pytest
+
+      - name: Validate articles
+        run: python scripts/validate_articles.py
+
+      - name: Validate skills
+        run: python scripts/validate_skills.py
+
+      - name: Regenerate index
+        run: python scripts/generate_topic_index.py
+
+      - name: Check for index drift
+        run: git diff --exit-code TOPIC-INDEX.md QUICK-REF.md
+        id: drift
+        continue-on-error: true
+
+      - name: Fail on index drift
+        if: steps.drift.outcome == 'failure'
+        run: |
+          echo "::error::TOPIC-INDEX.md or QUICK-REF.md is out of date. Run 'python scripts/generate_topic_index.py' and commit the result."
+          exit 1
+
+      - name: Run tests
+        run: python -m pytest tests/ -v
