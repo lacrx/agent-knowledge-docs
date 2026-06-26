@@ -98,28 +98,6 @@ def find_skills() -> list[Path]:
     return sorted(SKILLS_DIR.rglob("*.md"))
 
 
-def _scan_entries(paths: list[Path], title_key: str = "title") -> list[tuple[str, str, str, list[str]]]:
-    """Generic scanner returning (title, rel_path, summary, topics) tuples."""
-    entries = []
-    for path in paths:
-        text = path.read_text(encoding="utf-8")
-        fm = parse_frontmatter(text)
-        if fm is None:
-            continue
-
-        title = fm.get(title_key) or fm.get("name") or path.stem
-        rel_path = str(path.relative_to(ROOT))
-        summary = fm.get("summary", "")
-        if isinstance(summary, list):
-            summary = " ".join(summary)
-        topics = fm.get("topics", [])
-        if isinstance(topics, str):
-            topics = [topics]
-
-        entries.append((title, rel_path, summary, topics))
-
-    return entries
-
 
 def build_topic_index(article_entries: list[dict]) -> dict[str, list[dict]]:
     """Build topic-keyed map for legacy format."""

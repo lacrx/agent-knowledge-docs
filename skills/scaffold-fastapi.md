@@ -12,8 +12,11 @@ summary: >
   Scaffold the FastAPI application layer on top of an already-scaffolded Python project.
   Covers JSON API routes, Jinja2 HTML templates, static files, health check, and lifespan.
 references:
+  - articles/agent-workflow/anthropic-sdk-fastapi-tools.md
   - skills/scaffold-python-project.md
   - skills/create-python-dockerfile.md
+  - articles/aws/fargate/structuring-fastapi-for-fargate.md
+  - articles/aws/python-project-scaffolding-aws.md
 last-updated: 2026-06-13
 ---
 

@@ -13,7 +13,11 @@ summary: >
   web app deployed to AWS Fargate. Covers single-stage and multi-stage builds, .dockerignore,
   ECR push, and local verification.
 references:
+  - articles/agent-workflow/anthropic-sdk-fastapi-tools.md
   - skills/scaffold-fastapi.md
+  - articles/aws/fargate/deploying-python-web-apps-to-fargate.md
+  - articles/aws/fargate/structuring-fastapi-for-fargate.md
+  - articles/aws/python-project-scaffolding-aws.md
 last-updated: 2026-06-12
 ---
 

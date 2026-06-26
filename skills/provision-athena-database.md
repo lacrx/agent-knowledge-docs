@@ -13,7 +13,6 @@ summary: >
   query cost controls.
 references:
   - skills/scaffold-terraform-aws-repo.md
-  - skills/provision-s3-bucket.md
 last-updated: 2026-06-15
 ---
 

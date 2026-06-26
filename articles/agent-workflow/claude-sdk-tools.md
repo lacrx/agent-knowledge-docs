@@ -7,7 +7,7 @@ topics:
   - ai-development
   - tools
 skills:
-  - build-claude-agent
+  - build-claude-sdk-agent
 summary: >
   Advisory guide for the Claude Agent SDK — query(), ClaudeSDKClient, and custom tools
   via MCP servers, permission handling, streaming, and session resumption.

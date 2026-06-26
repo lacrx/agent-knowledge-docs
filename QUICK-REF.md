@@ -4,19 +4,23 @@
 
 | Topics | Article | Skills |
 |--------|---------|--------|
-| anthropic-sdk, fastapi, python, api-development, ai-development, tools | [anthropic-sdk-fastapi-tools](articles/agent-workflow/anthropic-sdk-fastapi-tools.md) | [build-fastapi-ai-server](skills/build-fastapi-ai-server.md) |
-| claude-agent-sdk, python, agents, ai-development, tools | [claude-sdk-tools](articles/agent-workflow/claude-sdk-tools.md) | [build-claude-agent](skills/build-claude-agent.md) |
+| anthropic-sdk, fastapi, python, api-development, ai-development, tools | [anthropic-sdk-fastapi-tools](articles/agent-workflow/anthropic-sdk-fastapi-tools.md) | [build-anthropic-sdk-fastapi-agent](skills/build-anthropic-sdk-fastapi-agent.md), [scaffold-fastapi](skills/scaffold-fastapi.md), [create-python-dockerfile](skills/create-python-dockerfile.md) |
+| claude-agent-sdk, python, agents, ai-development, tools | [claude-sdk-tools](articles/agent-workflow/claude-sdk-tools.md) | [build-claude-sdk-agent](skills/build-claude-sdk-agent.md) |
 | copilot-sdk, python, agents, ai-development, tools | [copilot-sdk-tools](articles/agent-workflow/copilot-sdk-tools.md) | [build-copilot-sdk-agent](skills/build-copilot-sdk-agent.md) |
-| agent-workflow, specification-driven, ai-development, developer-experience | [spec-based-development](articles/agent-workflow/spec-based-development.md) | [fetch-topic-bundle](skills/fetch-topic-bundle.md) |
-| vercel-ai-sdk, typescript, nextjs, ai-development, tools | [vercel-ai-sdk-tools](articles/agent-workflow/vercel-ai-sdk-tools.md) | [build-vercel-ai-agent](skills/build-vercel-ai-agent.md) |
-| anthropic-sdk, fastapi, python, ai-development | _(none)_ | [build-anthropic-sdk-fastapi-agent](skills/build-anthropic-sdk-fastapi-agent.md) |
-| claude-agent-sdk, python, agents, ai-development | _(none)_ | [build-claude-sdk-agent](skills/build-claude-sdk-agent.md) |
-| vercel-ai-sdk, typescript, nextjs, ai-development | _(none)_ | [build-vercel-ai-sdk-agent](skills/build-vercel-ai-sdk-agent.md) |
-| docker, containerization, nextjs, typescript, fargate, aws | _(none)_ | [create-nextjs-dockerfile](skills/create-nextjs-dockerfile.md) |
-| docker, containerization, python, fargate, aws | _(none)_ | [create-python-dockerfile](skills/create-python-dockerfile.md) |
-| knowledge-base, runtime-retrieval, agent-workflow, gh-cli | _(none)_ | [retrieve-from-this-repo](skills/retrieve-from-this-repo.md) |
-| python, fastapi, scaffolding, aws, fargate | _(none)_ | [scaffold-fastapi](skills/scaffold-fastapi.md) |
-| nextjs, typescript, scaffolding, project-setup, aws | _(none)_ | [scaffold-nextjs-project](skills/scaffold-nextjs-project.md) |
-| nextjs, typescript, scaffolding, prisma, fargate, aws | _(none)_ | [scaffold-nextjs-server](skills/scaffold-nextjs-server.md) |
-| python, scaffolding, project-setup, fastapi, aws | _(none)_ | [scaffold-python-project](skills/scaffold-python-project.md) |
-| terraform, aws, iac, scaffolding, project-setup | _(none)_ | [scaffold-terraform-aws-repo](skills/scaffold-terraform-aws-repo.md) |
+| agent-workflow, specification-driven, ai-development, developer-experience | [spec-based-development](articles/agent-workflow/spec-based-development.md) | [fetch-topic-bundle](skills/fetch-topic-bundle.md), [retrieve-from-this-repo](skills/retrieve-from-this-repo.md) |
+| vercel-ai-sdk, typescript, nextjs, ai-development, tools | [vercel-ai-sdk-tools](articles/agent-workflow/vercel-ai-sdk-tools.md) | [build-vercel-ai-sdk-agent](skills/build-vercel-ai-sdk-agent.md), [scaffold-nextjs-project](skills/scaffold-nextjs-project.md) |
+| bedrock, knowledge-bases, aws, rag, search | [bedrock-knowledge-bases](articles/ai-ml/bedrock-knowledge-bases.md) | [integrate-bedrock-knowledge-bases](skills/integrate-bedrock-knowledge-bases.md) |
+| bedrock, llm, aws, python, ai-integration | [bedrock-llm-integration](articles/ai-ml/bedrock-llm-integration.md) | [integrate-bedrock-llm](skills/integrate-bedrock-llm.md) |
+| sagemaker, machine-learning, aws, terraform, infrastructure-as-code | [sagemaker-ml-platform](articles/ai-ml/sagemaker-ml-platform.md) | [provision-sagemaker-root](skills/provision-sagemaker-root.md), [provision-sagemaker-training](skills/provision-sagemaker-training.md), [provision-sagemaker-model-registry](skills/provision-sagemaker-model-registry.md) |
+| aws, cloudwatch, logging, monitoring, observability | [aws-cloudwatch-logging-monitoring](articles/aws/aws-cloudwatch-logging-monitoring.md) | [query-aws-logs](skills/query-aws-logs.md) |
+| aws, networking, web-applications, infrastructure-as-code, terraform | [aws-web-app-networking](articles/aws/aws-web-app-networking.md) | [provision-route53-zone](skills/provision-route53-zone.md), [provision-fargate-task](skills/provision-fargate-task.md), [provision-rds-instance](skills/provision-rds-instance.md), [provision-ecr-repository](skills/provision-ecr-repository.md) |
+| aws, fargate, nextjs, cloud-deployment, containerization | [deploying-nextjs-apps-to-fargate](articles/aws/fargate/deploying-nextjs-apps-to-fargate.md) | [create-nextjs-dockerfile](skills/create-nextjs-dockerfile.md), [scaffold-nextjs-server](skills/scaffold-nextjs-server.md), [ecr-push-deploy](skills/ecr-push-deploy.md) |
+| aws, fargate, python, cloud-deployment, containerization | [deploying-python-web-apps-to-fargate](articles/aws/fargate/deploying-python-web-apps-to-fargate.md) | [create-python-dockerfile](skills/create-python-dockerfile.md), [provision-fargate-task](skills/provision-fargate-task.md), [ecr-push-deploy](skills/ecr-push-deploy.md) |
+| fastapi, aws, fargate, python, web-applications | [structuring-fastapi-for-fargate](articles/aws/fargate/structuring-fastapi-for-fargate.md) | [scaffold-fastapi](skills/scaffold-fastapi.md), [create-python-dockerfile](skills/create-python-dockerfile.md), [provision-fargate-task](skills/provision-fargate-task.md) |
+| nextjs, aws, fargate, web-applications, project-structure | [structuring-nextjs-server-for-fargate](articles/aws/fargate/structuring-nextjs-server-for-fargate.md) | [scaffold-nextjs-server](skills/scaffold-nextjs-server.md), [create-nextjs-dockerfile](skills/create-nextjs-dockerfile.md), [configure-prisma-postgres](skills/configure-prisma-postgres.md) |
+| project-structure, nextjs, aws, scaffolding, web-applications | [nextjs-project-scaffolding-aws](articles/aws/nextjs-project-scaffolding-aws.md) | [scaffold-nextjs-project](skills/scaffold-nextjs-project.md), [scaffold-nextjs-server](skills/scaffold-nextjs-server.md), [configure-prisma-postgres](skills/configure-prisma-postgres.md) |
+| project-structure, python, aws, scaffolding, web-applications | [python-project-scaffolding-aws](articles/aws/python-project-scaffolding-aws.md) | [scaffold-python-project](skills/scaffold-python-project.md), [scaffold-fastapi](skills/scaffold-fastapi.md), [create-python-dockerfile](skills/create-python-dockerfile.md) |
+| aws, loki, logging, observability, debugging | [loki-query-troubleshooting](articles/monitoring/loki-query-troubleshooting.md) | [query-loki-logs](skills/query-loki-logs.md) |
+| testing, nextjs, integration-testing, vitest, playwright | [nextjs-integration-testing-patterns](articles/testing/nextjs-integration-testing-patterns.md) | [setup-nextjs-tests](skills/setup-nextjs-tests.md) |
+| testing, python, integration-testing, pytest, aws | [python-integration-testing-patterns](articles/testing/python-integration-testing-patterns.md) | [setup-python-integration-tests](skills/setup-python-integration-tests.md) |
+| testing, pytest, mocking, aws, python | [testing-aws-services-with-moto](articles/testing/testing-aws-services-with-moto.md) | [setup-python-aws-tests](skills/setup-python-aws-tests.md) |

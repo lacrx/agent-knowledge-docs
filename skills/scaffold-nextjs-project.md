@@ -12,8 +12,10 @@ summary: >
   Scaffold a Next.js 14+ TypeScript project from scratch with App Router, pnpm,
   Tailwind CSS, Prisma, and AWS-ready configuration for Fargate deployment.
 references:
+  - articles/agent-workflow/vercel-ai-sdk-tools.md
   - skills/create-nextjs-dockerfile.md
   - skills/scaffold-python-project.md
+  - articles/aws/nextjs-project-scaffolding-aws.md
 last-updated: 2026-06-13
 ---
 

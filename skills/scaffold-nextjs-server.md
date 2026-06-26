@@ -15,6 +15,9 @@ summary: >
 references:
   - skills/scaffold-nextjs-project.md
   - skills/create-nextjs-dockerfile.md
+  - articles/aws/fargate/deploying-nextjs-apps-to-fargate.md
+  - articles/aws/fargate/structuring-nextjs-server-for-fargate.md
+  - articles/aws/nextjs-project-scaffolding-aws.md
 last-updated: 2026-06-13
 ---
 

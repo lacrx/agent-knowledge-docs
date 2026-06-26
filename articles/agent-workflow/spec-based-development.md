@@ -15,12 +15,13 @@ aliases:
   - ai agent specs
 related:
   - copilot-sdk-tools
-  - claude-agent-sdk-tools
+  - claude-sdk-tools
   - vercel-ai-sdk-tools
   - anthropic-sdk-fastapi-tools
 skills:
   - fetch-topic-bundle
-last-updated: 2025-06-29
+  - retrieve-from-this-repo
+last-updated: 2026-06-25
 ---
 
 # Spec-Based Development for AI Agents

@@ -51,7 +51,7 @@ After scaffolding the repo, use these skills to add infrastructure:
 | `provision-ecr-repository` | ECR container image repositories |
 | `provision-route53-zone` | Route 53 hosted zones and DNS records |
 | `provision-sagemaker-root` | SageMaker domain and studio (if needed) |
-| `provision-bedrock-knowledge-base` | Bedrock knowledge base (if needed) |
+| `provision-bedrock-knowledge-bases` | Bedrock knowledge bases (if needed) |
 
 ---
 

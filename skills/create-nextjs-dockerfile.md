@@ -15,6 +15,8 @@ summary: >
   .dockerignore, ECR push, and local verification.
 references:
   - skills/create-python-dockerfile.md
+  - articles/aws/fargate/deploying-nextjs-apps-to-fargate.md
+  - articles/aws/fargate/structuring-nextjs-server-for-fargate.md
 last-updated: 2026-06-12
 ---
 

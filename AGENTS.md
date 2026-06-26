@@ -14,6 +14,9 @@ alwaysApply: false
 ```
 ├── articles/                  # Advisory reference docs (rationale, trade-offs)
 │   ├── agent-workflow/        #   AI SDK integration patterns
+│   ├── ai-ml/                 #   Bedrock, SageMaker, ML platform guidance
+│   ├── aws/                   #   Networking, scaffolding, CloudWatch
+│   │   └── fargate/           #   Fargate deployment and structuring
 │   ├── monitoring/            #   Observability and logging
 │   └── testing/               #   Testing strategies and patterns
 ├── skills/                    # Executable step-by-step procedures (flat)
@@ -104,4 +107,4 @@ python -m pytest tests/
 - Regenerate indexes whenever articles or skills change.
 
 ---
-Last updated: 2026-06-12
+Last updated: 2026-06-25

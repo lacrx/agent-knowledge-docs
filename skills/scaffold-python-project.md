@@ -14,6 +14,7 @@ summary: >
 references:
   - skills/create-python-dockerfile.md
   - skills/scaffold-fastapi.md
+  - articles/aws/python-project-scaffolding-aws.md
 last-updated: 2026-06-13
 ---
 

@@ -14,9 +14,9 @@ summary: >
   multi-region replication.
 references:
   - skills/scaffold-terraform-aws-repo.md
-  - skills/ecr-push-deploy.md
   - skills/create-python-dockerfile.md
   - skills/create-nextjs-dockerfile.md
+  - articles/aws/aws-web-app-networking.md
 last-updated: 2026-06-15
 ---
 

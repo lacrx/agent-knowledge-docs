@@ -14,7 +14,7 @@ summary: >
   group, and deletion protection.
 references:
   - skills/scaffold-terraform-aws-repo.md
-  - skills/provision-secrets-manager.md
+  - articles/aws/aws-web-app-networking.md
 last-updated: 2026-06-15
 ---
 

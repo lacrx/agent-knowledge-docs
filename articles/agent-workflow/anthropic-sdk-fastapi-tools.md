@@ -8,7 +8,9 @@ topics:
   - ai-development
   - tools
 skills:
-  - build-fastapi-ai-server
+  - build-anthropic-sdk-fastapi-agent
+  - scaffold-fastapi
+  - create-python-dockerfile
 summary: >
   Advisory guide for building AI-powered APIs with the Anthropic Python SDK and FastAPI —
   Pydantic models, streaming responses, tool use, OpenAPI generation, and background tasks.
@@ -19,7 +21,7 @@ aliases:
   - fastapi claude
 related:
   - spec-based-development
-  - claude-agent-sdk-tools
+  - claude-sdk-tools
   - vercel-ai-sdk-tools
   - copilot-sdk-tools
 last-updated: 2026-06-12

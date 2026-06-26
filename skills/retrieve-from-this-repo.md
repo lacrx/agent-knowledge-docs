@@ -9,6 +9,7 @@ summary: >
   Fetch articles and skills from the knowledge base repo at runtime using gh CLI.
   Covers auth check, discovery workflow, and content retrieval via GitHub API.
 references:
+  - articles/agent-workflow/spec-based-development.md
   - QUICK-REF.md
 last-updated: 2026-06-12
 ---

@@ -10,20 +10,25 @@ ROOT = Path(__file__).resolve().parent.parent
 ARTICLES_DIR = ROOT / "articles"
 
 SLUG_PATTERN = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+CATEGORY_PATTERN = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*)*$")
 
 
 def list_categories():
-    """List existing category directories under articles/."""
+    """List existing category directories under articles/, including subdirs."""
     if not ARTICLES_DIR.exists():
         return []
-    return sorted([d.name for d in ARTICLES_DIR.iterdir() if d.is_dir()])
+    categories = []
+    for d in sorted(ARTICLES_DIR.rglob("*")):
+        if d.is_dir():
+            categories.append(str(d.relative_to(ARTICLES_DIR)))
+    return categories
 
 
 def create_article(name, category):
     """Create a new article file with template frontmatter and sections."""
     if not SLUG_PATTERN.match(name):
         raise ValueError(f"Invalid article name: {name}")
-    if not SLUG_PATTERN.match(category):
+    if not CATEGORY_PATTERN.match(category):
         raise ValueError(f"Invalid category name: {category}")
 
     category_dir = ARTICLES_DIR / category

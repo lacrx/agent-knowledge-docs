@@ -17,7 +17,7 @@ aliases:
   - copilot agent tools
 related:
   - spec-based-development
-  - claude-agent-sdk-tools
+  - claude-sdk-tools
   - anthropic-sdk-fastapi-tools
 last-updated: 2026-06-29
 ---

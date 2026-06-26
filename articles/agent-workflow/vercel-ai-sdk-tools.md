@@ -7,7 +7,8 @@ topics:
   - ai-development
   - tools
 skills:
-  - build-vercel-ai-agent
+  - build-vercel-ai-sdk-agent
+  - scaffold-nextjs-project
 summary: >
   Advisory guide for the Vercel AI SDK — streamText, generateText, and tool definitions
   with Zod schemas, React hooks, multi-provider support, and structured output.
@@ -17,7 +18,7 @@ aliases:
   - vercel ai tools
 related:
   - spec-based-development
-  - claude-agent-sdk-tools
+  - claude-sdk-tools
   - anthropic-sdk-fastapi-tools
   - copilot-sdk-tools
 last-updated: 2026-06-12
