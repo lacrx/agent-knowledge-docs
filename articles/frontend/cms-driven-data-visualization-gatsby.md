@@ -9,13 +9,16 @@ topics:
   - strapi
   - react
   - pmtiles
+  - observable-plot
 skills:
   - add-gatsby-visualization
 summary: >
   Architecture for embedding interactive data visualizations in a Gatsby site
-  via CMS content blocks. Covers the artifact.json config pattern, lazy-loaded
-  renderers, MapLibre + deck.gl composition, PMTiles self-hosted basemaps,
-  poster frame fallbacks, and service worker caching strategy.
+  via CMS content blocks. Covers the artifact.json config pattern, renderer
+  registry with staging differentiation (heavy vs. lightweight), CMS-sourced
+  data/config for lightweight renderers, MapLibre + deck.gl composition,
+  PMTiles self-hosted basemaps, poster frame fallbacks, and service worker
+  caching strategy.
 aliases:
   - gatsby visualization
   - gatsby maplibre
@@ -120,11 +123,68 @@ Key design decisions:
 ```typescript
 const RENDERERS: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
   "choropleth-3d-maplibre": Choropleth3DMaplibre,
-  // future: "scatter-svg", "timeline-chart", "housing-dashboard", etc.
+  "stat-tiles": StatTiles,
+  "timeline": Timeline,
+  "bar-chart": BarChart,
+  "vote-visualization": VoteVisualization,
+  "data-table": DataTable,
 };
 ```
 
 Each renderer receives `{ artifact }` as props. The artifact object is the full `GatsbyVisualization` node with resolved file URLs. Renderers are lazy-loaded so pages without visualizations pay zero JS cost.
+
+Normalize type strings on lookup (underscores to hyphens) so CMS entries with `stat_tiles` still resolve to the `stat-tiles` renderer key:
+
+```typescript
+const normalizedType = artifact.type.replace(/_/g, "-");
+const Renderer = RENDERERS[normalizedType];
+```
+
+### Staging: Heavy vs. Lightweight Renderers
+
+Not every renderer needs the poster frame and loader overlay. A `NEEDS_STAGE` map declares which types require the full staging treatment (poster crossfade, loading indicator, `data-viz-ready` gate):
+
+```typescript
+const NEEDS_STAGE: Record<string, boolean> = {
+  "choropleth-3d-maplibre": true,
+};
+```
+
+Types not in this map (stat-tiles, timeline, bar-chart, vote-visualization, data-table) render immediately without a poster or loader. They mount directly inside the figure container. This avoids unnecessary layout complexity for components that render in under 50ms.
+
+The staging wrapper (absolute-positioned poster, Suspense boundary, loading dots, `data-viz-ready` opacity transition) only wraps renderers where `NEEDS_STAGE[type]` is truthy.
+
+### CMS-Sourced Data and Config
+
+For lightweight visualizations, data can live in the CMS itself rather than in `artifact.json` files on disk. The `GatsbyVisualization` type extends with two optional fields:
+
+```typescript
+type GatsbyVisualization = {
+  vizId: string;
+  type: string;
+  // ... standard fields (camera, color, elevation) ...
+  data?: unknown;    // structured data from CMS
+  config?: unknown;  // renderer-specific config from CMS
+};
+```
+
+In Strapi, the visualization content type includes `data` (JSON) and `config` (JSON) fields that editors can populate directly. `gatsby-node.ts` sources these alongside `vizId` and `type`:
+
+```graphql
+query GetAllStrapiVisualizations {
+  visualizations(pagination: { pageSize: 100 }) {
+    documentId
+    vizId
+    title
+    type
+    source
+    data
+    config
+  }
+}
+```
+
+This is the right path for data that updates with editorial workflow (vote tallies, stat tile values, timeline entries). Heavy geospatial datasets still belong in artifact.json with file system linking.
 
 ---
 
