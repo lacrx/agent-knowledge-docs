@@ -107,7 +107,7 @@ Both servers are configured in `.claude/mcp.json` at the project root:
     },
     "playwriter": {
       "command": "npx",
-      "args": ["playwriter@latest"],
+      "args": ["-y", "playwriter@latest"],
       "env": {
         "PLAYWRITER_DIRECT": "1"
       }
