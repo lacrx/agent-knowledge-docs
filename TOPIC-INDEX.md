@@ -98,6 +98,24 @@ Aliases: nextjs aws project structure, next.js scaffolding aws, nextjs fargate p
 Skills: scaffold-python-project, scaffold-fastapi, create-python-dockerfile
 Aliases: python aws project layout, python project structure aws, fastapi project scaffolding
 
+## python / data-pipeline / municipal-data / geospatial / civic-tech / jsonl
+
+**municipal-data-pipeline-patterns** → [municipal-data-pipeline-patterns](articles/data-pipeline/municipal-data-pipeline-patterns.md)
+Skills: build-municipal-data-pipeline
+Aliases: municipal data pipeline, civic data pipeline, permit data import, housing data pipeline, etrakit pipeline, apr data pipeline, jsonl to json pipeline
+
+## gatsby / data-visualization / maplibre / deck-gl / d3 / strapi / react / pmtiles
+
+**cms-driven-data-visualization-gatsby** → [cms-driven-data-visualization-gatsby](articles/frontend/cms-driven-data-visualization-gatsby.md)
+Skills: add-gatsby-visualization
+Aliases: gatsby visualization, gatsby maplibre, cms data viz, gatsby deck.gl, strapi visualization block, gatsby choropleth, pmtiles gatsby
+
+## data-visualization / maplibre / react / d3 / choropleth / dashboard / civic-tech / typescript
+
+**interactive-choropleth-dashboard** → [interactive-choropleth-dashboard](articles/frontend/interactive-choropleth-dashboard.md)
+Skills: add-dashboard-view
+Aliases: choropleth dashboard, housing dashboard, civic dashboard, interactive map dashboard, linked selection map table, ward map dashboard, council district dashboard
+
 ## aws / loki / logging / observability / debugging
 
 **loki-query-troubleshooting** → [loki-query-troubleshooting](articles/monitoring/loki-query-troubleshooting.md)
