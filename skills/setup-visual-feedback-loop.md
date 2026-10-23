@@ -50,7 +50,7 @@ Create `.claude/mcp.json` at the project root (or merge into existing):
     },
     "playwriter": {
       "command": "npx",
-      "args": ["playwriter@latest"],
+      "args": ["-y", "playwriter@latest"],
       "env": {
         "PLAYWRITER_DIRECT": "1"
       }
@@ -73,6 +73,7 @@ Write `.claude/skills/visual-verify/SKILL.md`:
 
 ````markdown
 ---
+name: visual-verify
 description: >
   Verify frontend changes visually using browser MCP tools. Use this workflow
   after modifying JSX, CSS, layout components, or responsive behavior.
@@ -104,14 +105,7 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:8000
 If not running, start it:
 
 ```bash
-# Gatsby
-npx gatsby develop &
-
-# Next.js
-npx next dev &
-
-# Vite
-npx vite &
+npm run dev &
 ```
 
 Wait for the server to respond before proceeding.
@@ -153,21 +147,14 @@ Add MCP tool permissions to `.claude/settings.local.json` so the agent can use b
 {
   "permissions": {
     "allow": [
-      "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_snapshot",
-      "mcp__playwright__browser_screenshot",
-      "mcp__playwright__browser_click",
-      "mcp__playwright__browser_type",
-      "mcp__playwright__browser_resize",
-      "mcp__playwright__browser_wait",
-      "mcp__playwright__browser_close",
-      "mcp__playwriter__execute"
+      "mcp__playwright__*",
+      "mcp__playwriter__*"
     ]
   }
 }
 ```
 
-If `.claude/settings.local.json` already exists, merge the permission entries into the existing `allow` array.
+If `.claude/settings.local.json` already exists, merge these entries into the existing `allow` array. Wildcards cover all current and future tools from each MCP server.
 
 ### Step 4: Add reference to project CLAUDE.md
 
