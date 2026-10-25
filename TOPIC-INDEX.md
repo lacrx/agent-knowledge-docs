@@ -104,7 +104,7 @@ Aliases: python aws project layout, python project structure aws, fastapi projec
 Skills: build-municipal-data-pipeline
 Aliases: municipal data pipeline, civic data pipeline, permit data import, housing data pipeline, etrakit pipeline, apr data pipeline, jsonl to json pipeline
 
-## gatsby / data-visualization / maplibre / deck-gl / d3 / strapi / react / pmtiles
+## gatsby / data-visualization / maplibre / deck-gl / d3 / strapi / react / pmtiles / observable-plot
 
 **cms-driven-data-visualization-gatsby** → [cms-driven-data-visualization-gatsby](articles/frontend/cms-driven-data-visualization-gatsby.md)
 Skills: add-gatsby-visualization
@@ -115,6 +115,12 @@ Aliases: gatsby visualization, gatsby maplibre, cms data viz, gatsby deck.gl, st
 **interactive-choropleth-dashboard** → [interactive-choropleth-dashboard](articles/frontend/interactive-choropleth-dashboard.md)
 Skills: add-dashboard-view
 Aliases: choropleth dashboard, housing dashboard, civic dashboard, interactive map dashboard, linked selection map table, ward map dashboard, council district dashboard
+
+## data-visualization / react / d3 / interactive-charts / civic-tech / typescript / observable-plot / mobx
+
+**interactive-data-explorer-patterns** → [interactive-data-explorer-patterns](articles/frontend/interactive-data-explorer-patterns.md)
+Skills: add-dashboard-view
+Aliases: data explorer, interactive charts, owid grapher patterns, chart component architecture, user-driven visualization, data dashboard patterns, grapher patterns
 
 ## aws / loki / logging / observability / debugging
 
