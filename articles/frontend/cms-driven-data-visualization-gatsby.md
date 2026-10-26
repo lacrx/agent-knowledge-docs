@@ -29,7 +29,8 @@ aliases:
   - pmtiles gatsby
 related:
   - interactive-choropleth-dashboard
-last-updated: 2026-10-23
+  - interactive-data-explorer-patterns
+last-updated: 2026-10-24
 ---
 
 # CMS-Driven Data Visualization in Gatsby

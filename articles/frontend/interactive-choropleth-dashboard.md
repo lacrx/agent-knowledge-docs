@@ -28,7 +28,8 @@ aliases:
 related:
   - cms-driven-data-visualization-gatsby
   - municipal-data-pipeline-patterns
-last-updated: 2026-10-23
+  - interactive-data-explorer-patterns
+last-updated: 2026-10-24
 ---
 
 # Interactive Choropleth Dashboard
