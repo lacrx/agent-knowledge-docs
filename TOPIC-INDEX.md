@@ -122,6 +122,12 @@ Aliases: choropleth dashboard, housing dashboard, civic dashboard, interactive m
 Skills: add-dashboard-view
 Aliases: data explorer, interactive charts, owid grapher patterns, chart component architecture, user-driven visualization, data dashboard patterns, grapher patterns
 
+## infrastructure / linux / headless-server / systemd / security-hardening / homelab
+
+**workhorse-headless-server** → [workhorse-headless-server](articles/infrastructure/workhorse-headless-server.md)
+Skills: audit-headless-server
+Aliases: workhorse server, headless ubuntu server, homelab server, t490 server, lan server architecture
+
 ## aws / loki / logging / observability / debugging
 
 **loki-query-troubleshooting** → [loki-query-troubleshooting](articles/monitoring/loki-query-troubleshooting.md)
