@@ -52,7 +52,7 @@ Migrated to headless on 2026-10-26 after neo (MacBook, A18 Pro) took over as the
 Internet
   │
   ├── Tailscale mesh (${WORKHORSE_TAILSCALE_IP})
-  │     ├── neo (${NEON_TAILSCALE_IP}) - primary client
+  │     ├── neo (${NEO_TAILSCALE_IP}) - primary client
   │     └── thin-client (${THINCLIENT_TAILSCALE_IP}) - secondary
   │
   └── LAN (${LAN_SUBNET})
@@ -160,7 +160,7 @@ ssh asus 'service restart_firewall'   # reload firewall rules
 |---------|---------|
 | obsidian-sync | Continuous vault sync (obsidian-headless) |
 | assistant-restart | Discord bot webhook (Docker compose) |
-| ssh-agent | Standalone key management (replaced gnome-keyring) |
+| ssh-agent | Standalone key management |
 | ai-detector-recalibrate.timer | Monthly SlopOrNot recalibration |
 
 ### Maintenance Timers
@@ -368,7 +368,7 @@ Preserved here for context if rollback is ever needed:
 - **Printing**: CUPS, hplip, 15 printer drivers
 - **Bluetooth**: bluez stack
 - **X server**: xserver-xorg-core, xwayland, nvidia driver
-- **Input**: IBus, gnome-keyring (replaced by standalone ssh-agent)
+- **Input**: IBus, gnome-keyring
 - **Misc**: Apport, whoopsie, update-manager GUI, GNOME games
 
 Rollback: `sudo systemctl set-default graphical.target && sudo apt install ubuntu-desktop && reboot`
