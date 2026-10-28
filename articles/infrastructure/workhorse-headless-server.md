@@ -22,7 +22,7 @@ aliases:
   - lan server architecture
 related:
   - municipal-data-pipeline-patterns
-last-updated: 2026-10-27
+last-updated: 2026-10-28
 ---
 
 # Workhorse Headless Server
@@ -72,14 +72,15 @@ Access is SSH-only (pubkey, no password auth). VS Code Remote SSH and Claude Cod
 | docker + containerd | Container runtime | localhost:8000 (proxy) |
 | tailscaled | VPN mesh | 443, 63883 (Tailscale interface) |
 | ollama | Local LLM inference | localhost:11434 |
-| postgresql (14 + 16) | Databases | localhost:5432, 5433 |
+| postgresql 16 | Database | localhost:5433 |
 | smbd/nmbd | File sharing (LAN only) | 139, 445 (LAN subnet) |
 | libvirtd | VM management (socket-activated) | n/a |
 | NetworkManager | Network (wired only) | n/a |
 | cron | Scheduled scrapers | n/a |
 | fail2ban | SSH brute-force protection | n/a |
 | fwupd | Firmware updates | n/a |
-| unattended-upgrades | Security patches | n/a |
+| unattended-upgrades | Security patches + auto-reboot | n/a |
+| smartmontools | NVMe SMART monitoring | n/a |
 
 ### User Services (thomas, lingering enabled)
 
@@ -89,6 +90,18 @@ Access is SSH-only (pubkey, no password auth). VS Code Remote SSH and Claude Cod
 | assistant-restart | Discord bot webhook (Docker compose) |
 | ssh-agent | Standalone key management (replaced gnome-keyring) |
 | ai-detector-recalibrate.timer | Monthly SlopOrNot recalibration |
+
+### Maintenance Timers
+
+| Timer | Schedule | Purpose |
+|-------|----------|---------|
+| docker-prune.timer | Sun 3 AM | Prune images/containers older than 7 days |
+| workhorse-health-check.timer | Mon 7 AM | Services, disk, SMART, temps, Tailscale status |
+| backup-env-files.timer | Sun 2 AM | GPG-encrypted backup of all repo .env files |
+| fstrim.timer | Weekly | NVMe TRIM |
+| smartd | Weekly | NVMe SMART health checks |
+
+Scripts live in `/home/thomas/maintenance/`. Installed via `install-maintenance.sh`.
 
 ## Security Posture
 
@@ -126,6 +139,7 @@ Key details:
 - LUKS header backup for root at `/home/root-luks-header.img`. Root filesystem backup at `/home/root-backup/`.
 - Threat model: data-at-rest (drive theft). `/boot` is unencrypted; prolonged physical access with Secure Boot compromise is out of scope.
 - dracut was evaluated and reverted (dependency cascade on Ubuntu 24.04). clevis-initramfs is the working solution.
+- **Kernel hook**: `/etc/kernel/postinst.d/zz-clevis-rebind` automatically re-binds clevis TPM2 on both volumes after kernel installs, preventing PCR drift from breaking auto-unlock.
 
 ## Kernel Tuning
 
@@ -137,9 +151,25 @@ Config: `/etc/sysctl.d/99-server-tuning.conf`
 
 ## Maintenance Procedures
 
-### Applying Updates
+### Automatic Maintenance
 
-Unattended-upgrades handles security patches automatically. For manual upgrades:
+Unattended-upgrades handles security patches automatically with:
+- Unused kernel package removal enabled
+- Unused dependency removal enabled
+- Auto-reboot at 4 AM when a reboot-required patch is applied
+- Clevis TPM2 re-bind runs automatically on kernel installs (before reboot)
+
+The weekly health check (`workhorse-health-check.timer`) monitors: systemd services, disk usage, NVMe SMART health and wear, CPU temps, Tailscale connectivity and key expiry, Docker state. Results logged to journal:
+
+```bash
+journalctl -u workhorse-health-check --no-pager -n 50
+```
+
+Encrypted .env backups run weekly to `~/backups/env/` (GPG symmetric, AES256). Keeps last 30.
+
+### Manual Updates
+
+For manual upgrades:
 
 ```bash
 sudo apt update && sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y
@@ -155,6 +185,8 @@ The assistant bot auto-deploys via systemd timer polling for new commits:
 docker ps                           # check health
 docker compose -f ~/repos/assistant/docker-compose.yml logs -f  # tail logs
 ```
+
+Docker prune runs weekly (Sun 3 AM), removing images and containers older than 7 days.
 
 ### VM Management
 
@@ -182,7 +214,7 @@ sudo swapon /dev/mapper/swap_crypt
 
 ### TPM2 / Disk Encryption
 
-If TPM2 auto-unlock breaks after a kernel update, firmware update, or Secure Boot change (PCR 7 values shift):
+The kernel postinst hook (`/etc/kernel/postinst.d/zz-clevis-rebind`) handles re-binding automatically on kernel updates. Manual re-bind is only needed after firmware updates or Secure Boot changes:
 
 ```bash
 # Check current clevis bindings
@@ -216,6 +248,10 @@ Capped at 100MB (`/etc/systemd/journald.conf`). Check usage:
 journalctl --disk-usage
 ```
 
+### Tailscale
+
+Key expiry disabled (personal tailnet, single user). Auto-update enabled (check and apply). No manual key rotation needed.
+
 ## What Was Removed (2026-10-26 Migration)
 
 Preserved here for context if rollback is ever needed:
@@ -232,9 +268,10 @@ Preserved here for context if rollback is ever needed:
 
 Rollback: `sudo systemctl set-default graphical.target && sudo apt install ubuntu-desktop && reboot`
 
-## Monitoring Gaps
+## Monitoring
 
-- No centralized log aggregation (journald only, local)
-- No uptime monitoring beyond Tailscale peer status
+- NVMe SMART monitoring via smartmontools (weekly checks, alerting on degradation)
+- Weekly health check timer covers services, disk, temps, Tailscale, Docker
 - Netconsole configured to stream kmsg to thin-client for hard-freeze diagnosis
-- No SMART disk monitoring configured
+- No centralized log aggregation (journald only, local)
+- No uptime monitoring beyond Tailscale peer status and health check timer
