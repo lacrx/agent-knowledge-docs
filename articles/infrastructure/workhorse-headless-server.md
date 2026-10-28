@@ -31,7 +31,7 @@ last-updated: 2026-10-28
 
 Workhorse is a Lenovo ThinkPad T490 (i7-8665U, 48GB RAM, 600GB NVMe) running Ubuntu 24.04 in headless mode (multi-user.target). It serves as the central infrastructure node for development, AI workloads, and home automation.
 
-Previously ran a full GNOME desktop with NoMachine remote access. Migrated to headless on 2026-10-26 after neo (MacBook, A18 Pro) took over as the primary GUI device. The migration removed ~900 packages and freed ~10GB RAM that the GUI stack consumed.
+Migrated to headless on 2026-10-26 after neo (MacBook, A18 Pro) took over as the primary GUI device. The migration removed the desktop stack (~900 packages, ~10GB RAM freed).
 
 > **Note:** Concrete IPs and subnets are stored locally in `lan-config.env`, not in this repo. Placeholders below use `${VAR_NAME}` notation; resolve from that file.
 
@@ -362,8 +362,7 @@ Key expiry disabled (personal tailnet, single user). Auto-update enabled (check 
 
 Preserved here for context if rollback is ever needed:
 
-- **Display**: GNOME 46, GDM3, Mutter, XFCE 4 (NX virtual session)
-- **Remote desktop**: NoMachine 9.10.3 (all user services, scripts, sudoers)
+- **Display**: GNOME 46, GDM3, Mutter, XFCE 4
 - **Audio**: PipeWire, PulseAudio, WirePlumber
 - **Apps**: All flatpaks (Firefox, Discord, Slack, Spotify, Thunderbird, Inkscape), LibreOffice, Rhythmbox, Shotwell, Remmina, Transmission
 - **Printing**: CUPS, hplip, 15 printer drivers
