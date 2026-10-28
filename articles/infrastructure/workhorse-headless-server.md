@@ -86,6 +86,54 @@ SSH config aliases on workhorse and neo for quick access:
 | `asus` / `router` | ASUS router (LAN) | cornelius |
 | `thinclient` / `tc` | thin-client | thomas |
 
+### Router Configuration (ASUS RT-AX88U Pro)
+
+Firmware 3.0.0.6.102. Managed via `ssh asus` (key auth, user `cornelius`). Settings applied via `nvram set`/`nvram commit`.
+
+**Security hardening:**
+
+| Setting | Value | Why |
+|---------|-------|-----|
+| WPS | Disabled | Brute-forceable PIN attack vector |
+| SSH auth | Key-only (`sshd_pass=0`) | No password brute-force |
+| Admin access | HTTPS only (`http_enable=1`, port 8443) | No cleartext creds on LAN |
+| DoS protection | Enabled (`fw_dos_x=1`) | SYN/ICMP flood mitigation |
+| Firewall logging | Dropped packets (`fw_log_x=drop`) | Visibility into blocked traffic |
+| AiProtection | Fully disabled | Removes Trend Micro telemetry |
+| WAN access | Disabled | No remote admin |
+| Telnet | Disabled | No reason to have it |
+| UPnP | Disabled | No auto port forwards |
+
+**Performance:**
+
+| Setting | Value |
+|---------|-------|
+| OFDMA | Enabled (both bands) |
+| MU-MIMO | Enabled (both bands) |
+| 5GHz bandwidth | 160MHz |
+| USB 3.0 | Disabled (not in use; radiates 2.4GHz noise) |
+| Samba | Disabled (no USB storage) |
+| Smart Connect | Off (separate SSIDs: `beans` 5GHz, `beans_2.4g`) |
+
+**Reliability:**
+
+| Setting | Value |
+|---------|-------|
+| DNS upstream | 1.1.1.1 / 1.0.0.1 (Cloudflare) |
+| DNS over TLS | Enabled (strict mode) |
+| DHCP lease | 7 days (604800s) |
+| Wi-Fi security | WPA2/WPA3 transition (psk2sae + AES) |
+
+**Management via SSH:**
+
+```bash
+ssh asus 'nvram get <key>'            # read a setting
+ssh asus 'nvram set <key>=<val>; nvram commit'  # write + persist
+ssh asus 'service restart_dnsmasq'    # restart DNS/DHCP
+ssh asus 'service restart_wireless'   # restart Wi-Fi (briefly drops clients)
+ssh asus 'service restart_firewall'   # reload firewall rules
+```
+
 ## Service Inventory
 
 ### System Services
