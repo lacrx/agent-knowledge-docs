@@ -56,11 +56,12 @@ Internet
   │     └── thin-client (${THINCLIENT_TAILSCALE_IP}) - secondary
   │
   └── LAN (${LAN_SUBNET})
-        ├── workhorse (${WORKHORSE_LAN_IP}) - ethernet
+        ├── workhorse (${WORKHORSE_LAN_IP}) - ethernet, br0 bridge
+        ├── win11-autocad VM (${VM_LAN_IP}) - bridged via br0
         └── other LAN devices
 ```
 
-Access is SSH-only (pubkey, no password auth). VS Code Remote SSH and Claude Code are the primary interfaces from neon.
+Workhorse's physical NIC (`enp0s31f6`) is enslaved to a bridge (`br0`) via NetworkManager. The bridge carries workhorse's own LAN IP and gives the Windows VM its own LAN address. Access is SSH-only (pubkey, no password auth). VS Code Remote SSH and Claude Code are the primary interfaces from neon.
 
 ## Service Inventory
 
@@ -74,8 +75,8 @@ Access is SSH-only (pubkey, no password auth). VS Code Remote SSH and Claude Cod
 | ollama | Local LLM inference | localhost:11434 |
 | postgresql 16 | Database | localhost:5433 |
 | smbd/nmbd | File sharing (LAN only) | 139, 445 (LAN subnet) |
-| libvirtd | VM management (socket-activated) | n/a |
-| NetworkManager | Network (wired only) | n/a |
+| libvirtd | VM management (socket-activated); win11-autocad autostarts | n/a |
+| NetworkManager | Network (br0 bridge, wired only) | n/a |
 | cron | Scheduled scrapers | n/a |
 | fail2ban | SSH brute-force protection | n/a |
 | fwupd | Firmware updates | n/a |
@@ -190,13 +191,34 @@ Docker prune runs weekly (Sun 3 AM), removing images and containers older than 7
 
 ### VM Management
 
-Windows 11 VM for AutoCAD:
+Windows 11 VM (win11-autocad) for AutoCAD. Bridged to LAN via br0, autostarts with libvirtd. Accessed via RDP from neon.
+
+| Setting | Value |
+|---------|-------|
+| vCPU | 4 (host-passthrough) |
+| RAM | 8 GB |
+| Disk | 60GB qcow2 (virtio, cache=writeback, io=threads) |
+| Network | bridge (br0), LAN IP via router DHCP reservation |
+| Display | VNC on localhost (emergency fallback only) |
+| Access | RDP from neon (Microsoft Remote Desktop) |
+| Shared storage | virtiofs to `/home/thomas/repos/cad` |
 
 ```bash
-~/.local/bin/start-win11-vm.sh      # start headless
 virsh list --all                     # check state
-# Connect from neon: remote-viewer spice://workhorse:${VM_SPICE_PORT}
+virsh start win11-autocad            # manual start (normally autostarts)
+virsh shutdown win11-autocad         # clean ACPI shutdown
+virsh domifaddr win11-autocad --source agent  # find LAN IP
 ```
+
+Emergency VNC console (if RDP breaks):
+
+```bash
+# From neon:
+ssh -L 5900:127.0.0.1:5900 workhorse
+# Then connect VNC viewer to localhost:5900
+```
+
+Polkit rule (`/etc/polkit-1/rules.d/50-libvirt.rules`) grants the `libvirt` group passwordless VM management. No sudo needed for daily operations.
 
 ### Swap Troubleshooting
 
