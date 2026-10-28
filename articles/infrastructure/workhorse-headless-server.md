@@ -22,7 +22,7 @@ aliases:
   - lan server architecture
 related:
   - municipal-data-pipeline-patterns
-last-updated: 2026-10-26
+last-updated: 2026-10-27
 ---
 
 # Workhorse Headless Server
@@ -41,7 +41,7 @@ Previously ran a full GNOME desktop with NoMachine remote access. Migrated to he
 |-----------|------|
 | CPU | Intel i7-8665U (4c/8t, 1.9GHz base, 4.8GHz boost) |
 | RAM | 48GB DDR4 (upgraded from 16GB) |
-| Storage | 600GB NVMe (60GB root + 540GB LUKS-encrypted /home) |
+| Storage | 1TB NVMe (60GB root LUKS + 863GB /home LUKS + 7.4GB swap + 529MB /boot + 99MB EFI) |
 | GPU | Intel UHD 620 (i915 only; MX250 blacklisted) |
 | Network | Intel Gigabit Ethernet (no WiFi interface active) |
 | Power | Always on AC; optimized for uptime, not battery life |
@@ -110,9 +110,22 @@ Default: deny incoming, allow outgoing.
 
 ### Disk Encryption
 
-- `/home` on LUKS (TPM2 auto-unlock): `home_crypt`
-- Swap on plain dm-crypt with ephemeral random key: `swap_crypt`
-- Root (`/`) unencrypted (boot partition)
+Full disk encryption with TPM2 auto-unlock via clevis-initramfs. Both LUKS volumes unlock in the initramfs before systemd starts; no passphrase needed for unattended boot.
+
+| Partition | Mapping | Type | Mount | TPM2 |
+|-----------|---------|------|-------|------|
+| nvme0n1p4 (60G) | `root_crypt` | LUKS2 + ext4 | `/` | clevis + systemd-cryptenroll |
+| nvme0n1p1 (863G) | `home_crypt` | LUKS2 + ext4 | `/home` | clevis + systemd-cryptenroll |
+| nvme0n1p3 (7.4G) | `swap_crypt` | plain dm-crypt | `[SWAP]` | random key per boot |
+| nvme0n1p5 (529M) | n/a | ext4 | `/boot` | unencrypted |
+| nvme0n1p2 (99M) | n/a | vfat | `/boot/efi` | unencrypted |
+
+Key details:
+- Clevis TPM2 bindings sealed to PCR 7 (Secure Boot state). Both volumes have clevis tokens (initramfs) and systemd-cryptenroll tokens (fallback).
+- `home_crypt` has `initramfs` option in crypttab so clevis processes it in the initrd alongside root.
+- LUKS header backup for root at `/home/root-luks-header.img`. Root filesystem backup at `/home/root-backup/`.
+- Threat model: data-at-rest (drive theft). `/boot` is unencrypted; prolonged physical access with Secure Boot compromise is out of scope.
+- dracut was evaluated and reverted (dependency cascade on Ubuntu 24.04). clevis-initramfs is the working solution.
 
 ## Kernel Tuning
 
@@ -165,6 +178,34 @@ blkid /dev/nvme0n1p3
 sudo cryptsetup open --type plain --key-file /dev/urandom /dev/nvme0n1p3 swap_crypt
 sudo mkswap /dev/mapper/swap_crypt
 sudo swapon /dev/mapper/swap_crypt
+```
+
+### TPM2 / Disk Encryption
+
+If TPM2 auto-unlock breaks after a kernel update, firmware update, or Secure Boot change (PCR 7 values shift):
+
+```bash
+# Check current clevis bindings
+sudo clevis luks list -d /dev/nvme0n1p4
+sudo clevis luks list -d /dev/nvme0n1p1
+
+# Re-bind (removes old binding, creates new one sealed to current PCR values)
+sudo clevis luks unbind -d /dev/nvme0n1p4 -s <slot>
+sudo clevis luks bind -d /dev/nvme0n1p4 tpm2 '{"pcr_ids":"7"}'
+# Repeat for /dev/nvme0n1p1
+
+# Rebuild initramfs after any clevis changes
+sudo update-initramfs -u -k all
+```
+
+If both clevis and systemd-cryptenroll tokens break, passphrase fallback is available on console (keyslot 0 on both volumes).
+
+To verify unattended boot worked after reboot:
+
+```bash
+journalctl -b -u 'systemd-cryptsetup@*' --no-pager
+# Both root_crypt and home_crypt should show "already active"
+# (unlocked by clevis in initramfs before systemd started)
 ```
 
 ### Journal Management
