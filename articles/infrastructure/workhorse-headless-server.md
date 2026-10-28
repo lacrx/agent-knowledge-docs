@@ -31,7 +31,7 @@ last-updated: 2026-10-28
 
 Workhorse is a Lenovo ThinkPad T490 (i7-8665U, 48GB RAM, 600GB NVMe) running Ubuntu 24.04 in headless mode (multi-user.target). It serves as the central infrastructure node for development, AI workloads, and home automation.
 
-Previously ran a full GNOME desktop with NoMachine remote access. Migrated to headless on 2026-10-26 after neon (MacBook, A18 Pro) took over as the primary GUI device. The migration removed ~900 packages and freed ~10GB RAM that the GUI stack consumed.
+Previously ran a full GNOME desktop with NoMachine remote access. Migrated to headless on 2026-10-26 after neo (MacBook, A18 Pro) took over as the primary GUI device. The migration removed ~900 packages and freed ~10GB RAM that the GUI stack consumed.
 
 > **Note:** Concrete IPs and subnets are stored locally in `lan-config.env`, not in this repo. Placeholders below use `${VAR_NAME}` notation; resolve from that file.
 
@@ -52,7 +52,7 @@ Previously ran a full GNOME desktop with NoMachine remote access. Migrated to he
 Internet
   │
   ├── Tailscale mesh (${WORKHORSE_TAILSCALE_IP})
-  │     ├── neon (${NEON_TAILSCALE_IP}) - primary client
+  │     ├── neo (${NEON_TAILSCALE_IP}) - primary client
   │     └── thin-client (${THINCLIENT_TAILSCALE_IP}) - secondary
   │
   └── LAN (${LAN_SUBNET})
@@ -61,7 +61,7 @@ Internet
         └── other LAN devices
 ```
 
-Workhorse's physical NIC (`enp0s31f6`) is enslaved to a bridge (`br0`) via NetworkManager. The bridge carries workhorse's own LAN IP and gives the Windows VM its own LAN address. Access is SSH-only (pubkey, no password auth). VS Code Remote SSH and Claude Code are the primary interfaces from neon.
+Workhorse's physical NIC (`enp0s31f6`) is enslaved to a bridge (`br0`) via NetworkManager. The bridge carries workhorse's own LAN IP and gives the Windows VM its own LAN address. Access is SSH-only (pubkey, no password auth). VS Code Remote SSH and Claude Code are the primary interfaces from neo.
 
 ## Service Inventory
 
@@ -191,7 +191,7 @@ Docker prune runs weekly (Sun 3 AM), removing images and containers older than 7
 
 ### VM Management
 
-Windows 11 VM (win11-autocad) for AutoCAD. Bridged to LAN via br0, autostarts with libvirtd. Accessed via RDP from neon.
+Windows 11 VM (win11-autocad) for AutoCAD. Bridged to LAN via br0, autostarts with libvirtd. Accessed via RDP from neo.
 
 | Setting | Value |
 |---------|-------|
@@ -200,7 +200,7 @@ Windows 11 VM (win11-autocad) for AutoCAD. Bridged to LAN via br0, autostarts wi
 | Disk | 60GB qcow2 (virtio, cache=writeback, io=threads) |
 | Network | bridge (br0), LAN IP via router DHCP reservation |
 | Display | VNC on localhost (emergency fallback only) |
-| Access | RDP from neon (Microsoft Remote Desktop) |
+| Access | RDP from neo (Microsoft Remote Desktop) |
 | Shared storage | virtiofs to `/home/thomas/repos/cad` |
 
 ```bash
@@ -213,7 +213,7 @@ virsh domifaddr win11-autocad --source agent  # find LAN IP
 Emergency VNC console (if RDP breaks):
 
 ```bash
-# From neon:
+# From neo:
 ssh -L 5900:127.0.0.1:5900 workhorse
 # Then connect VNC viewer to localhost:5900
 ```
