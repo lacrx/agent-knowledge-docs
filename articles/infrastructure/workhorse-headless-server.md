@@ -56,12 +56,35 @@ Internet
   │     └── thin-client (${THINCLIENT_TAILSCALE_IP}) - secondary
   │
   └── LAN (${LAN_SUBNET})
+        ├── router/asus (192.168.50.1) - ASUS wireless router, DHCP server
         ├── workhorse (${WORKHORSE_LAN_IP}) - ethernet, br0 bridge
-        ├── win11-autocad VM (${VM_LAN_IP}) - bridged via br0
+        ├── neo (${NEO_LAN_IP}) - Wi-Fi
+        ├── win11-autocad VM (${WIN11_LAN_IP}) - bridged via br0
         └── other LAN devices
 ```
 
 Workhorse's physical NIC (`enp0s31f6`) is enslaved to a bridge (`br0`) via NetworkManager. The bridge carries workhorse's own LAN IP and gives the Windows VM its own LAN address. Access is SSH-only (pubkey, no password auth). VS Code Remote SSH and Claude Code are the primary interfaces from neo.
+
+### DHCP Reservations
+
+All infrastructure hosts have static DHCP reservations on the ASUS router, so LAN IPs survive reboots and lease expiry.
+
+| Host | MAC | Reserved IP |
+|------|-----|-------------|
+| workhorse | `F8:75:A4:53:4A:89` | ${WORKHORSE_LAN_IP} |
+| neo | `6A:5E:AE:25:66:F4` | ${NEO_LAN_IP} |
+| win11-autocad | `52:54:00:06:34:A7` | ${WIN11_LAN_IP} |
+
+### SSH Aliases
+
+SSH config aliases on workhorse and neo for quick access:
+
+| Alias | Target | User |
+|-------|--------|------|
+| `neo` / `neo-lan` | neo (Tailscale / LAN) | thomas |
+| `win11` / `win` | Windows VM (LAN) | thomas |
+| `asus` / `router` | ASUS router (LAN) | cornelius |
+| `thinclient` / `tc` | thin-client | thomas |
 
 ## Service Inventory
 
@@ -191,31 +214,44 @@ Docker prune runs weekly (Sun 3 AM), removing images and containers older than 7
 
 ### VM Management
 
-Windows 11 VM (win11-autocad) for AutoCAD. Bridged to LAN via br0, autostarts with libvirtd. Accessed via RDP from neo.
+Windows 11 Pro VM (win11-autocad, build 26200/24H2) for AutoCAD. Bridged to LAN via br0, autostarts with libvirtd. Debloated: ads, telemetry, Copilot, Recall, widgets, and bloatware removed.
 
 | Setting | Value |
 |---------|-------|
 | vCPU | 4 (host-passthrough) |
 | RAM | 8 GB |
 | Disk | 60GB qcow2 (virtio, cache=writeback, io=threads) |
-| Network | bridge (br0), LAN IP via router DHCP reservation |
-| Display | VNC on localhost (emergency fallback only) |
-| Access | RDP from neo (Microsoft Remote Desktop) |
+| Network | bridge (br0), DHCP reservation at ${WIN11_LAN_IP} |
+| Display | SPICE on localhost:${VM_SPICE_PORT} (emergency fallback) |
+| Access | SSH (`ssh win11`), RDP from neo (Microsoft Remote Desktop) |
 | Shared storage | virtiofs to `/home/thomas/repos/cad` |
+
+The VM runs OpenSSH Server (automatic start, pubkey auth). Workhorse and neo both have key-based SSH access. The VM also has outbound SSH keys authorized on workhorse and neo (`thomas@win11-autocad`).
 
 ```bash
 virsh list --all                     # check state
 virsh start win11-autocad            # manual start (normally autostarts)
 virsh shutdown win11-autocad         # clean ACPI shutdown
-virsh domifaddr win11-autocad --source agent  # find LAN IP
+ssh win11 hostname                   # SSH access (preferred)
 ```
 
-Emergency VNC console (if RDP breaks):
+Emergency SPICE console (if SSH and RDP both break):
 
 ```bash
 # From neo:
-ssh -L 5900:127.0.0.1:5900 workhorse
-# Then connect VNC viewer to localhost:5900
+ssh -L 5900:127.0.0.1:${VM_SPICE_PORT} workhorse
+# Then connect SPICE/VNC viewer to localhost:5900
+```
+
+Note: the SSH session to the VM runs as a non-elevated user (UAC). For operations requiring admin rights (HKLM registry writes, service management), use a SYSTEM scheduled task:
+
+```powershell
+$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c <command>"
+$principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -RunLevel Highest
+Register-ScheduledTask -TaskName "AdminTask" -Action $action -Principal $principal -Force
+Start-ScheduledTask -TaskName "AdminTask"
+Start-Sleep -Seconds 5
+Unregister-ScheduledTask -TaskName "AdminTask" -Confirm:$false
 ```
 
 Polkit rule (`/etc/polkit-1/rules.d/50-libvirt.rules`) grants the `libvirt` group passwordless VM management. No sudo needed for daily operations.
