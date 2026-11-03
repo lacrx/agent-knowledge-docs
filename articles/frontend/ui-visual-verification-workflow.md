@@ -10,6 +10,7 @@ topics:
   - css-debugging
 skills:
   - ui-visual-verification
+  - blazor-ui-verification
 summary: >
   Methodology for agent-driven visual UI verification using a tiered
   cheapest-first approach: a11y tree, computed styles, screenshots, pixel
@@ -150,7 +151,7 @@ Video (T4) is justified only for temporal bugs: behavior that exists across mult
 
 After recording, always extract frames with ffmpeg at an appropriate rate (60fps for flash detection, 10-15fps for scroll behavior, 5-10fps for general review). Use ImageMagick `compare` to find high-difference frames automatically, then view those frames to pinpoint the transition.
 
-> **Skill:** For the step-by-step edit-verify-iterate loop using agent-browser, use the `ui-visual-verification` skill.
+> **Skill:** For the step-by-step edit-verify-iterate loop using agent-browser, use the `ui-visual-verification` skill. For Blazor/.NET projects using Playwright, use the `blazor-ui-verification` skill.
 
 ## References
 
