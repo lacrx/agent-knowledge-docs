@@ -122,6 +122,12 @@ Aliases: choropleth dashboard, housing dashboard, civic dashboard, interactive m
 Skills: add-dashboard-view
 Aliases: data explorer, interactive charts, owid grapher patterns, chart component architecture, user-driven visualization, data dashboard patterns, grapher patterns
 
+## frontend / playwright / browser-automation / mcp / visual-testing / ai-development / gatsby / react
+
+**visual-feedback-loop-for-agents** → [visual-feedback-loop-for-agents](articles/frontend/visual-feedback-loop-for-agents.md)
+Skills: setup-visual-feedback-loop
+Aliases: playwright mcp, browser mcp, visual verification, frontend agent, playwriter, screenshot verification, visual feedback
+
 ## infrastructure / linux / headless-server / systemd / security-hardening / homelab
 
 **workhorse-headless-server** → [workhorse-headless-server](articles/infrastructure/workhorse-headless-server.md)
