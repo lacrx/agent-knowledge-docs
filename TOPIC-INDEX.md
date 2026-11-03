@@ -122,6 +122,12 @@ Aliases: choropleth dashboard, housing dashboard, civic dashboard, interactive m
 Skills: add-dashboard-view
 Aliases: data explorer, interactive charts, owid grapher patterns, chart component architecture, user-driven visualization, data dashboard patterns, grapher patterns
 
+## visual-verification / frontend / ui-testing / design-tokens / accessibility / screenshots / css-debugging
+
+**ui-visual-verification-workflow** → [ui-visual-verification-workflow](articles/frontend/ui-visual-verification-workflow.md)
+Skills: ui-visual-verification
+Aliases: ui surgeon, visual testing, screenshot verification, css visual regression, ui verification loop
+
 ## frontend / playwright / browser-automation / mcp / visual-testing / ai-development / gatsby / react
 
 **visual-feedback-loop-for-agents** → [visual-feedback-loop-for-agents](articles/frontend/visual-feedback-loop-for-agents.md)
