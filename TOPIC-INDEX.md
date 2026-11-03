@@ -125,7 +125,7 @@ Aliases: data explorer, interactive charts, owid grapher patterns, chart compone
 ## visual-verification / frontend / ui-testing / design-tokens / accessibility / screenshots / css-debugging
 
 **ui-visual-verification-workflow** → [ui-visual-verification-workflow](articles/frontend/ui-visual-verification-workflow.md)
-Skills: ui-visual-verification
+Skills: ui-visual-verification, blazor-ui-verification
 Aliases: ui surgeon, visual testing, screenshot verification, css visual regression, ui verification loop
 
 ## frontend / playwright / browser-automation / mcp / visual-testing / ai-development / gatsby / react
