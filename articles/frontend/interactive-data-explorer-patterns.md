@@ -29,6 +29,7 @@ aliases:
 related:
   - interactive-choropleth-dashboard
   - cms-driven-data-visualization-gatsby
+  - ui-visual-verification-workflow
 last-updated: 2026-10-24
 ---
 

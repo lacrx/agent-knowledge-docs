@@ -30,6 +30,8 @@ aliases:
 related:
   - interactive-choropleth-dashboard
   - interactive-data-explorer-patterns
+  - ui-visual-verification-workflow
+  - visual-feedback-loop-for-agents
 last-updated: 2026-10-24
 ---
 
