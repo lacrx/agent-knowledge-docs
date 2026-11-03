@@ -26,6 +26,7 @@ aliases:
 related:
   - cms-driven-data-visualization-gatsby
   - interactive-data-explorer-patterns
+  - visual-feedback-loop-for-agents
 last-updated: 2026-11-03
 ---
 

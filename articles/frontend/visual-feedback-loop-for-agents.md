@@ -28,6 +28,7 @@ aliases:
   - visual feedback
 related:
   - cms-driven-data-visualization-gatsby
+  - ui-visual-verification-workflow
 last-updated: 2026-10-23
 ---
 
