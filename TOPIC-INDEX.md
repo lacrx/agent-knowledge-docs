@@ -23,7 +23,7 @@ Aliases: copilot sdk python, github copilot sdk, copilot agent tools
 ## agent-workflow / specification-driven / ai-development / developer-experience
 
 **spec-based-development** → [spec-based-development](articles/agent-workflow/spec-based-development.md)
-Skills: fetch-topic-bundle, retrieve-from-this-repo
+Skills: consult-knowledge-bases, fetch-topic-bundle, retrieve-from-this-repo
 Aliases: spec driven development, specification based development, ai agent specs
 
 ## vercel-ai-sdk / typescript / nextjs / ai-development / tools
