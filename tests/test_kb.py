@@ -71,6 +71,12 @@ class TestTermIn:
         assert kb.term_in("vm", kb._norm("restart the VM please"))
         assert not kb.term_in("vm", kb._norm("the vmware host"))
 
+    def test_plural_and_ing_forms(self):
+        assert kb.term_in("doors", kb._norm("add a door on the south wall"))
+        assert kb.term_in("drawing", kb._norm("draw a bedroom"))
+        assert kb.term_in("testing", kb._norm("add pytest tests"))
+        assert not kb.term_in("class", kb._norm("the cla module"))
+
     def test_hyphenated_matches_spaces(self):
         assert kb.term_in("claude-code", kb._norm("claude code in nvim"))
         assert kb.term_in("sb-79", kb._norm("does SB 79 apply"))
