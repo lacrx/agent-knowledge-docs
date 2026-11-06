@@ -19,9 +19,10 @@ related:
   - vercel-ai-sdk-tools
   - anthropic-sdk-fastapi-tools
 skills:
+  - consult-knowledge-bases
   - fetch-topic-bundle
   - retrieve-from-this-repo
-last-updated: 2026-06-25
+last-updated: 2026-11-06
 ---
 
 # Spec-Based Development for AI Agents

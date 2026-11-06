@@ -13,10 +13,14 @@ summary: >
 references:
   - articles/agent-workflow/spec-based-development.md
   - QUICK-REF.md
-last-updated: 2026-06-12
+last-updated: 2026-11-06
 ---
 
 # Fetch Topic Bundle
+
+> **Superseded by [consult-knowledge-bases](consult-knowledge-bases.md)** (2026-11-06): one `kb` script for every
+> `lacrx/*-knowledge-docs` repo, routing by each KB's When to Fetch topics, default branch aware
+> (policy uses `master`). Kept for reference.
 
 Bulk-fetch every skill matching a topic tag from the knowledge base repo. Designed for
 session-start bootstrapping: one script, one topic, all matching skills loaded into context.

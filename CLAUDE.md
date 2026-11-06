@@ -7,6 +7,7 @@ If the task does not involve these topics, skip KB lookup entirely.
 ## How to Fetch
 Fetch files with: `gh api repos/lacrx/agent-knowledge-docs/contents/{path}?ref=main -H "Accept: application/vnd.github.raw+json"`
 Never clone the repo. One command per file.
+On neo and workhorse the `consult-knowledge-bases` skill does this for every KB: `~/.claude/skills/consult-knowledge-bases/kb route "<task>"`, then `kb get <kb> <path>` ([skills/consult-knowledge-bases.md](skills/consult-knowledge-bases.md)).
 
 ## Discovery Flow
 1. Fetch `QUICK-REF.md` first. Find the row matching the task's topic.

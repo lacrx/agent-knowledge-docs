@@ -11,10 +11,14 @@ summary: >
 references:
   - articles/agent-workflow/spec-based-development.md
   - QUICK-REF.md
-last-updated: 2026-06-12
+last-updated: 2026-11-06
 ---
 
 # Retrieve from Knowledge Base Repo
+
+> **Superseded by [consult-knowledge-bases](consult-knowledge-bases.md)** (2026-11-06): one `kb` script for every
+> `lacrx/*-knowledge-docs` repo, routing by each KB's When to Fetch topics, default branch aware
+> (policy uses `master`). Kept for reference.
 
 Fetch articles and skills from the shared knowledge base at runtime using only `gh` CLI. No cloning required.
 
@@ -43,8 +47,8 @@ Fetch articles and skills from the shared knowledge base at runtime using only `
 
 | Content Type   | Pattern                                |
 |----------------|----------------------------------------|
-| Quick reference | `quick-ref.md`                        |
-| Topic index    | `topic-index.md`                       |
+| Quick reference | `QUICK-REF.md`                        |
+| Topic index    | `TOPIC-INDEX.md`                       |
 | Article        | `articles/<category>/<name>.md`        |
 | Skill          | `skills/<name>.md`                     |
 
@@ -82,18 +86,18 @@ This returns raw markdown directly — no base64 decoding needed.
 
 Follow these steps in order to locate the right content.
 
-### 3.1: Fetch quick-ref.md first
+### 3.1: Fetch QUICK-REF.md first
 
 ```bash
-kb_fetch "quick-ref.md"
+kb_fetch "QUICK-REF.md"
 ```
 
 This is a compact routing table (~3KB) that maps topics to article paths and skill names. Search it for your topic.
 
-### 3.2: If no match, fall back to topic-index.md
+### 3.2: If no match, fall back to TOPIC-INDEX.md
 
 ```bash
-kb_fetch "topic-index.md"
+kb_fetch "TOPIC-INDEX.md"
 ```
 
 Full tag-to-article map. More comprehensive, larger file.
@@ -134,7 +138,7 @@ gh api "repos/lacrx/agent-knowledge-docs/git/trees/main?recursive=1" --jq '.tree
 |------------------------------|--------------------|--------------------------------------------------|-----------------------------------|
 | Research / Planning agent    | Articles           | Advisory context: rationale, trade-offs, decisions | Follow skill steps                |
 | Coding / Implementation agent | Skills           | Step-by-step execution instructions              | Read articles (context was already handed off) |
-| Any agent (discovery only)   | quick-ref.md, topic-index.md | Routing — find the right file path    | Use index content as implementation guidance |
+| Any agent (discovery only)   | QUICK-REF.md, TOPIC-INDEX.md | Routing — find the right file path    | Use index content as implementation guidance |
 
 Role separation is strict. Research agents gather context from articles and hand it off. Implementation agents receive that context and follow skills mechanically.
 
