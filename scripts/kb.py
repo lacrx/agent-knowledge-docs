@@ -144,12 +144,21 @@ def parse_rows(quick_ref: str) -> list:
     return rows
 
 
+def _stem(word: str) -> str:
+    """Crude stem so "doors"/"door" and "drawing"/"draw" meet; applied to both sides."""
+    if len(word) > 5 and word.endswith("ing"):
+        return word[:-3]
+    if len(word) > 3 and word.endswith("s") and not word.endswith("ss"):
+        return word[:-1]
+    return word
+
+
 def _norm(text: str) -> str:
-    return " " + re.sub(r"[^a-z0-9]+", " ", text.lower()) + " "
+    return " " + " ".join(_stem(w) for w in re.findall(r"[a-z0-9]+", text.lower())) + " "
 
 
 def term_in(term: str, task_norm: str) -> bool:
-    """Whole-word match; hyphenated terms also match with spaces."""
+    """Whole-word match on stemmed words; hyphenated terms also match with spaces."""
     t = _norm(term).strip()
     return bool(t) and (" " + t + " ") in task_norm
 
