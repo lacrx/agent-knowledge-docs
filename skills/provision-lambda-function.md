@@ -15,7 +15,7 @@ summary: >
   variables, optional VPC attachment, and event source wiring guidance.
 references:
   - skills/scaffold-terraform-aws-repo.md
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Provision AWS Lambda Function
@@ -383,7 +383,7 @@ module "data_processor" {
   source = "./modules/lambda"
 
   function_name      = "data-processor"
-  image_uri          = "${aws_ecr_repository.processor.repository_url}:latest"
+  image_uri          = "${aws_ecr_repository.processor.repository_url}:1.0.0"
   role_name          = "data-processor-lambda-role"
   memory_size        = 1024
   timeout            = 300

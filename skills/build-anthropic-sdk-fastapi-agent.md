@@ -12,7 +12,7 @@ summary: >
   and FastAPI. Covers setup, routes, tool loop, streaming SSE, OpenAPI generation, and CORS.
 references:
   - articles/agent-workflow/anthropic-sdk-fastapi-tools.md
-last-updated: 2026-06-12
+last-updated: 2026-11-07
 ---
 
 # Build an Anthropic SDK + FastAPI Server
@@ -110,11 +110,11 @@ Rules:
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from anthropic import Anthropic
+from anthropic import AsyncAnthropic
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.client = Anthropic()
+    app.state.client = AsyncAnthropic()
     yield
 
 app = FastAPI(title="AI Agent API", lifespan=lifespan)
@@ -137,7 +137,7 @@ from app.models import ChatRequest, ChatResponse
 async def chat(request: ChatRequest, req: Request):
     client = req.app.state.client
 
-    response = client.messages.create(
+    response = await client.messages.create(
         model=request.model,
         max_tokens=request.max_tokens,
         system=request.system or "You are a helpful assistant.",
@@ -222,15 +222,15 @@ Rules:
 
 ```python
 # app/agent.py
-from anthropic import Anthropic
+from anthropic import AsyncAnthropic
 from anthropic.types import ToolUseBlock, TextBlock
 from app.tools import TOOLS, handle_tool
 
-async def run_agent(client: Anthropic, message: str, model: str, max_tokens: int, max_turns: int) -> str:
+async def run_agent(client: AsyncAnthropic, message: str, model: str, max_tokens: int, max_turns: int) -> str:
     messages = [{"role": "user", "content": message}]
 
     for _ in range(max_turns):
-        response = client.messages.create(
+        response = await client.messages.create(
             model=model,
             max_tokens=max_tokens,
             messages=messages,
@@ -296,12 +296,12 @@ async def chat_stream(request: ChatRequest, req: Request):
     client = req.app.state.client
 
     async def generate():
-        with client.messages.stream(
+        async with client.messages.stream(
             model=request.model,
             max_tokens=request.max_tokens,
             messages=[{"role": "user", "content": request.message}]
         ) as stream:
-            for text in stream.text_stream:
+            async for text in stream.text_stream:
                 yield f"data: {json.dumps({'text': text})}\n\n"
         yield "data: [DONE]\n\n"
 
@@ -319,17 +319,17 @@ async def agent_stream(request: AgentRequest, req: Request):
         messages = [{"role": "user", "content": request.message}]
 
         for turn in range(request.max_turns):
-            with client.messages.stream(
+            async with client.messages.stream(
                 model=request.model,
                 max_tokens=request.max_tokens,
                 messages=messages,
                 tools=TOOLS
             ) as stream:
-                for event in stream:
+                async for event in stream:
                     if hasattr(event, 'text'):
                         yield f"data: {json.dumps({'type': 'text', 'text': event.text})}\n\n"
 
-                response = stream.get_final_message()
+                response = await stream.get_final_message()
 
             if response.stop_reason == "end_turn":
                 yield "data: [DONE]\n\n"
@@ -422,13 +422,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from anthropic import Anthropic
+from anthropic import AsyncAnthropic
 from anthropic.types import ToolUseBlock, TextBlock
 from pydantic import BaseModel, Field
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.client = Anthropic()
+    app.state.client = AsyncAnthropic()
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -460,7 +460,7 @@ async def chat(request: ChatRequest, req: Request):
     messages = [{"role": "user", "content": request.message}]
 
     for _ in range(5):
-        response = client.messages.create(
+        response = await client.messages.create(
             model=request.model, max_tokens=request.max_tokens,
             messages=messages, tools=TOOLS
         )

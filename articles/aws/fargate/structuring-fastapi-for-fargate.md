@@ -19,7 +19,7 @@ aliases:
 related:
   - deploying-python-web-apps-to-fargate
   - structuring-nextjs-server-for-fargate
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Structuring FastAPI for Fargate

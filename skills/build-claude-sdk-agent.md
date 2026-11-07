@@ -12,10 +12,12 @@ summary: >
   Covers setup, authentication, built-in and custom tools, streaming, multi-agent, and hooks.
 references:
   - articles/agent-workflow/claude-sdk-tools.md
-last-updated: 2026-06-12
+last-updated: 2026-11-07
 ---
 
 # Build a Claude Agent SDK Agent
+
+> **⚠️ DEPRECATED — DO NOT USE.** This skill references API surfaces that do not exist. The correct package is `claude-code-sdk` (not `claude-agent-sdk`), and the actual API differs substantially from what is documented here. This skill needs a full rewrite against the real SDK. Until then, consult the official Claude Code SDK documentation directly.
 
 Executable steps for building a Python agent using the Claude Agent SDK. Follow in order.
 

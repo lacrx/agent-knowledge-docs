@@ -16,7 +16,7 @@ references:
   - skills/create-nextjs-dockerfile.md
   - skills/scaffold-python-project.md
   - articles/aws/nextjs-project-scaffolding-aws.md
-last-updated: 2026-06-13
+last-updated: 2026-11-07
 ---
 
 # Scaffold Next.js Project
@@ -28,7 +28,7 @@ Follow steps in order.
 
 ## Prerequisites
 
-- Node.js 20+ installed
+- Node.js 22+ installed
 - pnpm installed (`npm install -g pnpm`)
 - Git installed
 
@@ -109,6 +109,8 @@ export default nextConfig;
 ```
 
 ### Step 6: Create `tailwind.config.ts`
+
+> **Note:** Tailwind v4 uses CSS-first configuration via `@import "tailwindcss"` in your CSS file. The `tailwind.config.ts` file is only needed for Tailwind v3 or as a v4 compatibility layer. For new projects on Tailwind v4, you can skip this file entirely and configure Tailwind through CSS.
 
 ```typescript
 import type { Config } from "tailwindcss";
@@ -259,9 +261,7 @@ export async function GET() {
 ### Step 14: Create `src/styles/globals.css`
 
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 ```
 
 ### Step 15: Create `bootstrap.sh`
@@ -270,12 +270,12 @@ export async function GET() {
 #!/usr/bin/env bash
 set -euo pipefail
 
-MIN_NODE="20"
+MIN_NODE="22"
 
 echo "=== Checking Node.js version ==="
 NODE_VERSION=$(node --version | sed 's/v//' | cut -d. -f1)
 if [ "$NODE_VERSION" -lt "$MIN_NODE" ]; then
-    echo "ERROR: Node.js ${MIN_NODE}+ required, found v$(node --version)"
+    echo "ERROR: Node.js 22+ required, found v$(node --version)"
     exit 1
 fi
 echo "Node.js $(node --version) OK"

@@ -16,7 +16,7 @@ aliases:
   - logql query errors
 related:
   - aws-cloudwatch-logging-monitoring
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Loki Query Troubleshooting
@@ -273,7 +273,7 @@ curl -G "https://loki.example.com/loki/api/v1/query_range" \
 
 Grafana Cloud provides a managed Loki endpoint. The typical setup:
 
-1. Deploy Grafana Agent (or Grafana Alloy) as a sidecar or daemonset in ECS/EKS.
+1. Deploy Grafana Alloy (successor to Grafana Agent) as a sidecar or daemonset in ECS/EKS.
 2. Configure the agent to scrape container logs and add AWS metadata labels.
 3. Push to the Grafana Cloud Loki endpoint using the provided API key.
 
@@ -313,5 +313,5 @@ Some teams ship CloudWatch Logs to Loki for unified querying. This is done via L
 ## References
 
 - [Grafana Loki LogQL documentation](https://grafana.com/docs/loki/latest/logql/)
-- [Grafana Agent configuration for AWS](https://grafana.com/docs/agent/latest/)
+- [Grafana Alloy configuration (successor to Grafana Agent)](https://grafana.com/docs/alloy/latest/)
 - [Loki storage configuration with S3](https://grafana.com/docs/loki/latest/storage/)

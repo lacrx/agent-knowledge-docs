@@ -16,7 +16,7 @@ summary: >
 references:
   - skills/query-aws-logs.md
   - articles/monitoring/loki-query-troubleshooting.md
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Query Loki Logs

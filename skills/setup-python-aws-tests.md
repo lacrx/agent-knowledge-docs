@@ -17,7 +17,7 @@ references:
   - skills/scaffold-python-project.md
   - skills/setup-python-integration-tests.md
   - articles/testing/testing-aws-services-with-moto.md
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Set Up Python AWS Test Infrastructure
@@ -48,7 +48,7 @@ cat >> pyproject.toml << 'PYPROJECT'
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.4",
+    "pytest>=8.0",
     "pytest-asyncio>=0.23",
     "pytest-cov>=4.1",
     "moto[s3,dynamodb,sqs,secretsmanager]>=5.0",

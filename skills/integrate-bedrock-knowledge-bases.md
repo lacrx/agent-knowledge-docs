@@ -1,5 +1,6 @@
 ---
 name: integrate-bedrock-knowledge-bases
+title: Integrate Bedrock Knowledge Bases
 topics:
   - bedrock
   - knowledge-bases
@@ -12,7 +13,7 @@ summary: >
   configurable query settings, and mock-based testing.
 references:
   - articles/ai-ml/bedrock-knowledge-bases.md
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Integrate Bedrock Knowledge Bases
@@ -42,7 +43,7 @@ in order.
 
 ```bash
 pip install boto3
-echo "boto3>=1.34.0" >> requirements.txt
+echo "boto3>=1.35.0" >> requirements.txt
 ```
 
 ### Step 2: Create environment configuration

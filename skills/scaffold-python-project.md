@@ -15,7 +15,7 @@ references:
   - skills/create-python-dockerfile.md
   - skills/scaffold-fastapi.md
   - articles/aws/python-project-scaffolding-aws.md
-last-updated: 2026-06-13
+last-updated: 2026-11-07
 ---
 
 # Scaffold Python Project
@@ -84,7 +84,7 @@ httpx>=0.28.0,<1.0
 pytest>=8.3.0,<9.0
 pytest-cov>=6.0.0,<7.0
 pytest-asyncio>=0.24.0,<1.0
-moto[all]>=5.0.0,<6.0
+moto[s3,secretsmanager]>=5.0.0,<6.0
 ruff>=0.8.0,<1.0
 ```
 

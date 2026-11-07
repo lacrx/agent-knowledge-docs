@@ -15,7 +15,7 @@ summary: >
 references:
   - skills/scaffold-terraform-aws-repo.md
   - articles/aws/aws-web-app-networking.md
-last-updated: 2026-06-15
+last-updated: 2026-11-07
 ---
 
 # Provision RDS Instance
@@ -47,7 +47,7 @@ variable "instance_identifier" {
 variable "engine_version" {
   description = "PostgreSQL engine version"
   type        = string
-  default     = "16.3"
+  default     = "17.2"
 }
 
 variable "instance_class" {

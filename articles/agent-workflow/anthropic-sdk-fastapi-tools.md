@@ -24,7 +24,7 @@ related:
   - claude-sdk-tools
   - vercel-ai-sdk-tools
   - copilot-sdk-tools
-last-updated: 2026-06-12
+last-updated: 2026-11-07
 ---
 
 # Python FastAPI — Building AI-Powered APIs
@@ -33,7 +33,7 @@ last-updated: 2026-06-12
 
 FastAPI (`pip install fastapi`) lets you build high-performance APIs with automatic OpenAPI spec generation, Pydantic validation, and async support. For AI apps, it pairs with the Anthropic SDK to serve Claude-powered endpoints with streaming, tool use, and structured output — your job is to define routes, models, and wire up the AI client.
 
-> **Skill:** For step-by-step implementation including the minimal working example, use the `build-fastapi-ai-server` skill.
+> **Skill:** For step-by-step implementation including the minimal working example, use the `build-anthropic-sdk-fastapi-agent` skill.
 
 ---
 
@@ -94,7 +94,7 @@ app = FastAPI()
 
 class ChatRequest(BaseModel):
     message: str = Field(..., description="User message to send to Claude")
-    model: str = Field("claude-sonnet-4-6", description="Model to use")
+    model: str = Field("claude-sonnet-5-5", description="Model to use")
     max_tokens: int = Field(1024, description="Max tokens in response")
 
 class ChatResponse(BaseModel):
@@ -119,9 +119,9 @@ Rules:
 ### Blocking (simple)
 
 ```python
-from anthropic import Anthropic
+from anthropic import AsyncAnthropic
 
-client = Anthropic()
+client = AsyncAnthropic()
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -145,12 +145,12 @@ from fastapi.responses import StreamingResponse
 @app.post("/chat/stream")
 async def chat_stream(request: ChatRequest):
     async def generate():
-        with client.messages.stream(
+        async with client.messages.stream(
             model=request.model,
             max_tokens=request.max_tokens,
             messages=[{"role": "user", "content": request.message}]
         ) as stream:
-            for text in stream.text_stream:
+            async for text in stream.text_stream:
                 yield f"data: {text}\n\n"
         yield "data: [DONE]\n\n"
 

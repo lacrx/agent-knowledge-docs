@@ -21,7 +21,7 @@ related:
   - claude-sdk-tools
   - anthropic-sdk-fastapi-tools
   - copilot-sdk-tools
-last-updated: 2026-06-12
+last-updated: 2026-11-07
 ---
 
 # Vercel AI SDK — Building AI Apps with Tools
@@ -72,7 +72,7 @@ import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 
 // Use Claude
-streamText({ model: anthropic('claude-sonnet-4-6'), ... });
+streamText({ model: anthropic('claude-sonnet-5-5'), ... });
 
 // Use GPT
 streamText({ model: openai('gpt-4o'), ... });
@@ -133,7 +133,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: anthropic('claude-sonnet-4-6'),
+    model: anthropic('claude-sonnet-5-5'),
     messages,
     tools: { searchIssues },
     toolChoice: 'auto',
@@ -205,7 +205,7 @@ import { generateText, zodSchema } from 'ai';
 import { z } from 'zod';
 
 const { object } = await generateText({
-  model: anthropic('claude-sonnet-4-6'),
+  model: anthropic('claude-sonnet-5-5'),
   schema: zodSchema(z.object({
     title: z.string(),
     bugs: z.array(z.object({
@@ -234,7 +234,7 @@ For recursive/nested schemas, use `zodSchema(schema, { useReferences: true })`.
 
 ```typescript
 const result = streamText({
-  model: anthropic('claude-sonnet-4-6'),
+  model: anthropic('claude-sonnet-5-5'),
   messages,
   onFinish: ({ text, usage, finishReason }) => {
     console.log(`Done: ${usage.totalTokens} tokens, reason: ${finishReason}`);
@@ -263,6 +263,6 @@ const result = streamText({
 ## Related Articles
 
 - **[spec-based-development](spec-based-development.md)** — Write architecture and feature specs before coding; complements SDK-based agent workflows.
-- **[claude-agent-sdk-tools](claude-sdk-tools.md)** — Equivalent guide for Claude Agent SDK (Python).
+- **[claude-sdk-tools](claude-sdk-tools.md)** — Equivalent guide for Claude Agent SDK (Python).
 - **[copilot-sdk-tools](copilot-sdk-tools.md)** — Equivalent guide for GitHub Copilot Python SDK.
 - **[anthropic-sdk-fastapi-tools](anthropic-sdk-fastapi-tools.md)** — Build AI-powered APIs with Python FastAPI; pairs with this as a backend.

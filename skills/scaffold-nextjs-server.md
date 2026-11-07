@@ -18,7 +18,7 @@ references:
   - articles/aws/fargate/deploying-nextjs-apps-to-fargate.md
   - articles/aws/fargate/structuring-nextjs-server-for-fargate.md
   - articles/aws/nextjs-project-scaffolding-aws.md
-last-updated: 2026-06-13
+last-updated: 2026-11-07
 ---
 
 # Scaffold Next.js Server
@@ -64,10 +64,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  experimental: {
-    serverActions: {
-      bodySizeLimit: "2mb",
-    },
+  serverActions: {
+    bodySizeLimit: "2mb",
   },
 };
 
@@ -342,7 +340,7 @@ bundle. All others are server-only.
 
 ```dockerfile
 # ── Dependencies ───────────────────────────────────────────────
-FROM node:20-slim AS deps
+FROM node:22-slim AS deps
 
 WORKDIR /app
 
@@ -350,7 +348,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN corepack enable pnpm && pnpm install --frozen-lockfile
 
 # ── Builder ────────────────────────────────────────────────────
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 
 WORKDIR /app
 
@@ -362,7 +360,7 @@ RUN corepack enable pnpm && \
     pnpm run build
 
 # ── Runtime ────────────────────────────────────────────────────
-FROM node:20-slim
+FROM node:22-slim
 
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \

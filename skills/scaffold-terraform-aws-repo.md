@@ -14,7 +14,7 @@ summary: >
 references:
   - skills/scaffold-python-project.md
   - skills/scaffold-nextjs-project.md
-last-updated: 2026-06-13
+last-updated: 2026-11-07
 ---
 
 # Scaffold Terraform AWS Repo
@@ -189,7 +189,6 @@ Add resource modules below this as needed. Use companion `provision-*` skills.
 *.tfstate
 *.tfstate.*
 .terraform/
-.terraform.lock.hcl
 
 # Crash logs
 crash.log

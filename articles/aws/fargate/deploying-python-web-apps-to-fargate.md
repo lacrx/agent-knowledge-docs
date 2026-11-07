@@ -19,7 +19,7 @@ aliases:
 related:
   - structuring-fastapi-for-fargate
   - deploying-nextjs-apps-to-fargate
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Deploying Python Web Apps to Fargate
@@ -42,11 +42,12 @@ The base image choice directly affects build time, image size, and security surf
 
 | Base Image | Size | Use Case |
 |---|---|---|
-| `python:3.12-slim` | ~150 MB | General purpose, good default |
+| `python:3.13-slim` | ~150 MB | Current release, good default |
+| `python:3.12-slim` | ~150 MB | Previous release, still fully supported |
 | `python:3.12-alpine` | ~50 MB | Smallest size, but musl libc breaks some C-extension packages |
 | `python:3.12` | ~900 MB | Full Debian, only when you need system-level build tools at runtime |
 
-Prefer `slim` unless you have a specific reason to deviate. Alpine images cause silent failures with packages that depend on glibc (numpy, pandas, psycopg2). If you need alpine-level size, use a multi-stage build with `slim` as the runtime stage.
+Prefer `python:3.13-slim` or `python:3.12-slim` unless you have a specific reason to deviate. Alpine images cause silent failures with packages that depend on glibc (numpy, pandas, psycopg2). If you need alpine-level size, use a multi-stage build with `slim` as the runtime stage.
 
 ### Multi-Stage Builds
 

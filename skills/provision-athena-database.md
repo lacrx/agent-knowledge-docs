@@ -13,7 +13,7 @@ summary: >
   query cost controls.
 references:
   - skills/scaffold-terraform-aws-repo.md
-last-updated: 2026-06-15
+last-updated: 2026-11-07
 ---
 
 # Provision Athena Database
@@ -137,8 +137,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "athena_results" {
 ```hcl
 resource "aws_glue_catalog_database" "this" {
   name = var.database_name
-
-  tags = var.tags
 }
 ```
 

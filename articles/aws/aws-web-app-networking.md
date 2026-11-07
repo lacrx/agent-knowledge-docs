@@ -19,7 +19,7 @@ aliases:
   - aws alb networking
 related:
   - aws-cloudwatch-logging-monitoring
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # AWS Web App Networking

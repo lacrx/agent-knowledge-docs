@@ -16,7 +16,7 @@ aliases:
   - bedrock vector search
 related:
   - bedrock-llm-integration
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Bedrock Knowledge Bases
@@ -65,7 +65,7 @@ Chunk size and overlap are the most impactful parameters. Chunks that are too sm
 
 ### Embedding Models
 
-You choose an embedding model at knowledge base creation time. Options include Amazon Titan Embeddings and Cohere Embed models available through Bedrock. The embedding model determines the vector dimensionality and, more importantly, the semantic quality of retrieval. Once selected, changing the embedding model requires re-ingesting all documents.
+You choose an embedding model at knowledge base creation time. Options include Amazon Titan Embeddings, Amazon Titan Embeddings V2, and Cohere Embed models available through Bedrock. The embedding model determines the vector dimensionality and, more importantly, the semantic quality of retrieval. Once selected, changing the embedding model requires re-ingesting all documents.
 
 ### Vector Store Options
 
@@ -78,6 +78,8 @@ Bedrock can provision a managed OpenSearch Serverless collection automatically, 
 | **Amazon Aurora PostgreSQL (pgvector)** | Familiar SQL interface, existing Aurora investment | Scaling characteristics differ from purpose-built vector DBs |
 | **Pinecone** | Purpose-built vector DB, good performance | Third-party dependency, additional cost |
 | **Redis Enterprise Cloud** | Low-latency retrieval | Third-party dependency |
+| **Neptune Analytics** | Graph-enhanced vector search, combines structured relationships with semantic similarity | Requires Neptune Analytics instance; best when data has graph relationships |
+| **MongoDB Atlas** | Familiar MongoDB query interface, vector search alongside operational data | Third-party dependency, additional cost; good when already using MongoDB |
 
 For most new projects, the managed OpenSearch Serverless option is the fastest path. Switch to a customer-owned store when you need specific index tuning, cost control, or multi-tenancy isolation.
 
@@ -108,7 +110,7 @@ You can attach metadata to documents (via a companion `.metadata.json` file per 
 {
   "metadataAttributes": {
     "department": { "value": "engineering", "type": "STRING" },
-    "year": { "value": 2025, "type": "NUMBER" }
+    "year": { "value": 2026, "type": "NUMBER" }
   }
 }
 ```
@@ -273,6 +275,6 @@ These limits change over time. Always check the current AWS service quotas docum
 
 ## References
 
-- AWS Bedrock Knowledge Bases documentation (AWS docs)
-- AWS Bedrock pricing page for current per-request and ingestion costs
-- OpenSearch Serverless pricing for vector store cost estimation
+- [AWS Bedrock Knowledge Bases documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html)
+- [AWS Bedrock pricing](https://aws.amazon.com/bedrock/pricing/) for current per-request and ingestion costs
+- [OpenSearch Serverless pricing](https://aws.amazon.com/opensearch-service/pricing/) for vector store cost estimation

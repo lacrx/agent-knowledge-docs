@@ -15,7 +15,7 @@ summary: >
 references:
   - skills/provision-ecr-repository.md
   - skills/create-python-dockerfile.md
-last-updated: 2026-06-15
+last-updated: 2026-11-07
 ---
 
 # Run Act Locally
@@ -41,7 +41,7 @@ locally without pushing. Follow steps in order.
 Save as `.github/local/Dockerfile.act`:
 
 ```dockerfile
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -55,8 +55,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-# Node 20
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+# Node 22
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y --no-install-recommends nodejs && \
     rm -rf /var/lib/apt/lists/*
 
@@ -102,7 +102,7 @@ docker run --rm act-runner:latest bash -c "\
   echo 'All tools present'"
 ```
 
-Expected output: version strings for Node 20.x, Python 3.12.x, uv, git, jq.
+Expected output: version strings for Node 22.x, Python 3.12.x, uv, git, jq.
 
 ### Step 4: Create .actrc
 
@@ -110,7 +110,7 @@ Save as `~/.actrc` (global) or `.github/local/actrc` (per-repo, copy to `~/.actr
 
 ```
 -P ubuntu-latest=act-runner:latest
--P ubuntu-22.04=act-runner:latest
+-P ubuntu-24.04=act-runner:latest
 --pull=false
 ```
 
@@ -243,7 +243,7 @@ workflow calls, and any step that requires GitHub-hosted runner features.
 
 ## Outputs
 
-- Custom Docker runner image (`act-runner:latest`) with Node 20, Python 3.12, uv, git, jq
-- `~/.actrc` mapping `ubuntu-latest` and `ubuntu-22.04` to local image
+- Custom Docker runner image (`act-runner:latest`) with Node 22, Python 3.12, uv, git, jq
+- `~/.actrc` mapping `ubuntu-latest` and `ubuntu-24.04` to local image
 - `.github/local/build-act-runner.sh` setup script for teammates
 - Runner image optionally pushed to ECR for team sharing

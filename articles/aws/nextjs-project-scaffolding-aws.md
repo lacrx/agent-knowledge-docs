@@ -18,7 +18,7 @@ aliases:
   - nextjs fargate project layout
 related:
   - python-project-scaffolding-aws
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Next.js Project Scaffolding for AWS
@@ -249,7 +249,7 @@ module.exports = {
 The standalone build produces a `server.js` file and a minimal `.next/standalone` directory. Your Dockerfile copies only what is needed:
 
 ```dockerfile
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -257,7 +257,7 @@ COPY . .
 RUN npx prisma generate
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=builder /app/.next/standalone ./

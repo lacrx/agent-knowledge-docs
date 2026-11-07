@@ -12,10 +12,12 @@ summary: >
   Covers setup, authentication, tool definition, session creation, and streaming.
 references:
   - articles/agent-workflow/copilot-sdk-tools.md
-last-updated: 2026-06-12
+last-updated: 2026-11-07
 ---
 
 # Build a Copilot SDK Agent
+
+> **⚠️ DEPRECATED — DO NOT USE.** This skill references `copilot-sdk`, a package that does not exist. GitHub Copilot Extensions use a different architecture (HTTP-based extensions API). This skill needs a full rewrite or deletion. Do not follow these steps.
 
 Executable steps for building a Python agent using the GitHub Copilot SDK. Follow in order.
 

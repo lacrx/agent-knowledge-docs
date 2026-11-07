@@ -19,7 +19,7 @@ aliases:
 related:
   - structuring-nextjs-server-for-fargate
   - deploying-python-web-apps-to-fargate
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Deploying Next.js Apps to Fargate
@@ -58,7 +58,7 @@ The three stages serve distinct purposes:
 
 1. **deps** — Install production `node_modules` from the lockfile only. This stage is cached unless `package-lock.json` changes.
 2. **builder** — Install all dependencies (including devDependencies), copy source, run `next build`. This stage produces `.next/standalone`, `.next/static`, and `public/`.
-3. **runner** — Start from a clean `node:20-alpine` or `node:22-alpine` image. Copy only the standalone output, static assets, and public directory. Run as a non-root user.
+3. **runner** — Start from a clean `node:22-alpine` image. Copy only the standalone output, static assets, and public directory. Run as a non-root user.
 
 Key details the runner stage must handle:
 
@@ -207,7 +207,7 @@ Next.js has a two-tier environment variable system with critical security implic
 
 Any variable prefixed with `NEXT_PUBLIC_` is embedded into the JavaScript bundle during `next build`. It ships to every browser. Never put API keys, database URLs, internal service endpoints, or any secret in a `NEXT_PUBLIC_` variable.
 
-Because `NEXT_PUBLIC_` values are inlined at build time, they cannot be changed at runtime. If you need client-accessible configuration that varies per environment, use a server-side API route that returns configuration to the client, or use the Next.js `publicRuntimeConfig` pattern.
+Because `NEXT_PUBLIC_` values are inlined at build time, they cannot be changed at runtime. If you need client-accessible configuration that varies per environment, use a server-side API route that returns configuration to the client. (The `publicRuntimeConfig` pattern from `next.config.js` is deprecated in the App Router and does not work with server components. Use `NEXT_PUBLIC_` env vars at build time for static values, or a server endpoint for dynamic per-environment values.)
 
 ### Injecting Secrets with ECS
 

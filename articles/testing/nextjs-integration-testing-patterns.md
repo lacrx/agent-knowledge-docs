@@ -16,7 +16,7 @@ aliases:
   - react server component testing
 related:
   - python-integration-testing-patterns
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Next.js Integration Testing Patterns

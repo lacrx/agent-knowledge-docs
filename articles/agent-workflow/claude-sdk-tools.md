@@ -18,7 +18,7 @@ aliases:
 related:
   - spec-based-development
   - anthropic-sdk-fastapi-tools
-last-updated: 2026-06-12
+last-updated: 2026-11-07
 ---
 
 # Claude Agent SDK — Building Agents with Tools
@@ -27,7 +27,7 @@ last-updated: 2026-06-12
 
 The Claude Agent SDK (`pip install claude-agent-sdk`) lets you build agents that can use built-in tools or call your own Python functions as custom tools. The SDK handles the tool loop automatically — your job is to define tools, configure options, and process the response stream.
 
-> **Skill:** For step-by-step implementation including the minimal working example, use the `build-claude-agent` skill.
+> **Skill:** For step-by-step implementation including the minimal working example, use the `build-claude-sdk-agent` skill.
 
 ---
 

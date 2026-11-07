@@ -22,7 +22,7 @@ skills:
   - consult-knowledge-bases
   - fetch-topic-bundle
   - retrieve-from-this-repo
-last-updated: 2026-11-06
+last-updated: 2026-11-07
 ---
 
 # Spec-Based Development for AI Agents
@@ -111,7 +111,7 @@ Optional but recommended. Numbered files in a dedicated folder (e.g. `docs/adr/0
 
 The most important document type.
 
-**Common naming:** date-prefixed or ticket-prefixed (`20230205_feature.md`, `ticket-123_feature.md`)
+**Common naming:** date-prefixed or ticket-prefixed (`20260205_feature.md`, `ticket-123_feature.md`)
 
 **Contains:**
 
@@ -268,6 +268,6 @@ Repeat steps 1–5 for each feature. Step 0 only runs once per project.
 ## Related Articles
 
 - **[copilot-sdk-tools](copilot-sdk-tools.md)** — Build AI agents that can call Python functions as tools; complements spec-driven workflows.
-- **[claude-agent-sdk-tools](claude-agent-sdk-tools.md)** — Build AI agents with Claude Agent SDK; complements spec-driven workflows.
+- **[claude-sdk-tools](claude-sdk-tools.md)** — Build AI agents with Claude Agent SDK; complements spec-driven workflows.
 - **[vercel-ai-sdk-tools](vercel-ai-sdk-tools.md)** — Build AI apps with Vercel AI SDK, React hooks, and multi-provider streaming.
 - **[anthropic-sdk-fastapi-tools](anthropic-sdk-fastapi-tools.md)** — Build AI-powered APIs with Python FastAPI and the Anthropic SDK.

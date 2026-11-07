@@ -15,7 +15,7 @@ summary: >
 references:
   - skills/scaffold-nextjs-project.md
   - articles/testing/nextjs-integration-testing-patterns.md
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Set Up Next.js Test Infrastructure

@@ -14,7 +14,7 @@ summary: >
   readers and writers, optional secret resource policy, and rotation wiring.
 references:
   - skills/scaffold-terraform-aws-repo.md
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Provision AWS Secrets Manager Secret
@@ -208,14 +208,14 @@ resource "aws_iam_policy" "secret_write" {
 ### Step 6: Attach policies to approved principals
 
 ```hcl
-resource "aws_iam_policy_attachment" "secret_read" {
+resource "aws_iam_role_policy_attachment" "secret_read" {
   count      = local.has_principals ? 1 : 0
   name       = "${var.secret_name}-read-attachment"
   policy_arn = aws_iam_policy.secret_read[0].arn
   roles      = [for arn in var.allowed_principal_arns : element(split("/", arn), length(split("/", arn)) - 1)]
 }
 
-resource "aws_iam_policy_attachment" "secret_write" {
+resource "aws_iam_role_policy_attachment" "secret_write" {
   count      = local.has_principals ? 1 : 0
   name       = "${var.secret_name}-write-attachment"
   policy_arn = aws_iam_policy.secret_write[0].arn
@@ -249,7 +249,7 @@ resource "aws_iam_policy" "secret_kms_decrypt" {
   tags = var.tags
 }
 
-resource "aws_iam_policy_attachment" "secret_kms_decrypt" {
+resource "aws_iam_role_policy_attachment" "secret_kms_decrypt" {
   count      = local.use_kms_key && local.has_principals ? 1 : 0
   name       = "${var.secret_name}-kms-decrypt-attachment"
   policy_arn = aws_iam_policy.secret_kms_decrypt[0].arn

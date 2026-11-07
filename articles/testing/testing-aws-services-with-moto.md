@@ -16,7 +16,7 @@ aliases:
   - mock s3 dynamodb sqs
 related:
   - python-integration-testing-patterns
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Testing AWS Services With Moto
@@ -227,8 +227,8 @@ Pin your moto version. Moto releases frequently and occasionally changes behavio
 
 ```
 # requirements-test.txt
-moto[s3,dynamodb,sqs,secretsmanager]==5.1.0
-boto3>=1.34.0
+moto[s3,dynamodb,sqs,secretsmanager]>=5.0
+boto3>=1.35.0
 pytest>=8.0
 ```
 

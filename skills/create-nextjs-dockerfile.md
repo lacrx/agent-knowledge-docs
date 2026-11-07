@@ -17,7 +17,7 @@ references:
   - skills/create-python-dockerfile.md
   - articles/aws/fargate/deploying-nextjs-apps-to-fargate.md
   - articles/aws/fargate/structuring-nextjs-server-for-fargate.md
-last-updated: 2026-06-12
+last-updated: 2026-11-07
 ---
 
 # Create Next.js Dockerfile
@@ -59,7 +59,7 @@ that includes only the dependencies needed at runtime. Image size drops from ~1G
 
 ```dockerfile
 # ── Dependencies stage ─────────────────────────────────────────
-FROM node:20-slim AS deps
+FROM node:22-slim AS deps
 
 WORKDIR /app
 
@@ -67,7 +67,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
 
 # ── Builder stage ──────────────────────────────────────────────
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 
 WORKDIR /app
 
@@ -78,7 +78,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # ── Runtime stage ──────────────────────────────────────────────
-FROM node:20-slim
+FROM node:22-slim
 
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
@@ -106,7 +106,7 @@ CMD ["node", "server.js"]
 
 Key decisions:
 - Three stages: deps → builder → runtime. Only standalone output reaches final image.
-- `node:20-slim` not Alpine — native npm modules (sharp, bcrypt) need glibc.
+- `node:22-slim` not Alpine — native npm modules (sharp, bcrypt) need glibc.
 - `npm ci --ignore-scripts` in deps stage — deterministic installs, skip postinstall in isolated stage.
 - `NEXT_TELEMETRY_DISABLED=1` — no telemetry calls from build or runtime.
 - `HOSTNAME="0.0.0.0"` — Next.js standalone server binds to this; required for container networking.
@@ -142,7 +142,7 @@ playwright-report/
 Use when standalone output is not an option or for quick prototyping.
 
 ```dockerfile
-FROM node:20-slim
+FROM node:22-slim
 
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
@@ -230,7 +230,7 @@ docker stop my-nextjs-test
 
 | Constraint | Rationale |
 |---|---|
-| Use `node:20-slim`, not Alpine | Alpine uses musl — native npm modules (sharp, bcrypt) need glibc |
+| Use `node:22-slim`, not Alpine | Alpine uses musl — native npm modules (sharp, bcrypt) need glibc |
 | Enable `output: "standalone"` | Self-contained server.js with only runtime deps; ~150MB vs ~1GB |
 | Run as non-root user | Fargate supports non-root; limits blast radius |
 | Copy `package.json` before source | Docker layer cache: dep layer survives source-only changes |

@@ -15,7 +15,7 @@ aliases:
   - bedrock-model-invocation
 related:
   - bedrock-knowledge-bases
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Bedrock LLM Integration
@@ -72,6 +72,10 @@ Bedrock exposes multiple model families. The choice affects cost, latency, capab
 | Meta Llama | Open-weight, good general performance | Llama-specific JSON | Good cost/quality ratio; shorter context windows |
 | Amazon Titan | AWS-native, embeddings support | Titan JSON format | Useful for embeddings; text generation quality varies |
 | Mistral | Fast inference, code tasks | Mistral JSON format | Good latency; smaller model options available |
+| AI21 Labs | Summarization, paraphrasing | AI21 JSON format | Specialized NLP tasks |
+| Amazon Nova | AWS-native, multimodal | Nova JSON format | Cost-effective for general tasks; multiple size tiers |
+
+*(Selected families; see Bedrock console for full catalog)*
 
 Select the model based on the task. Use higher-capability models (Claude) for complex reasoning, extraction, or safety-critical outputs. Use smaller/cheaper models for classification, simple extraction, or high-volume low-stakes tasks. You can use different models for different features within the same application.
 
@@ -79,7 +83,7 @@ Store the model ID in configuration, not in code:
 
 ```python
 # config.py or environment variable
-BEDROCK_MODEL_ID = "anthropic.claude-sonnet-4-20250514"
+BEDROCK_MODEL_ID = "us.anthropic.claude-sonnet-5-5-v1"
 ```
 
 This makes it easy to swap models without code changes when newer versions release or pricing shifts.
@@ -286,7 +290,7 @@ def make_stub_llm(response_text: str) -> BedrockLLM:
 from botocore.stub import Stubber
 
 def test_invoke_model_call_shape():
-    llm = BedrockLLM(model_id="anthropic.claude-sonnet-4-20250514")
+    llm = BedrockLLM(model_id="us.anthropic.claude-sonnet-5-5-v1")
     with Stubber(llm.client) as stubber:
         stubber.add_response("invoke_model", expected_response, expected_params)
         result = llm.invoke("test prompt")
@@ -312,7 +316,7 @@ A key architectural decision is whether to use Bedrock or call model providers d
 | **API compatibility** | AWS-wrapped payload format, slight differences | Native API, full feature set |
 | **Rate limits** | AWS account-level quotas, adjustable via support | Provider-level quotas |
 | **Streaming** | Supported via `invoke_model_with_response_stream` | Natively supported (SSE) |
-| **Features** | May lag on latest features (e.g., tool use, caching) | Latest features immediately |
+| **Features** | May lag on latest features (check release notes for newly launched features) | Latest features immediately |
 | **Pricing** | Generally similar; on-demand or provisioned throughput | Pay-per-token, volume discounts vary |
 
 **Use Bedrock when**: your infrastructure is AWS-native, you want unified IAM auth, you need VPC-contained traffic, or you want one billing surface for multiple model providers.

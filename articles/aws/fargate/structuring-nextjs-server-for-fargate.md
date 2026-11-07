@@ -20,7 +20,7 @@ aliases:
 related:
   - deploying-nextjs-apps-to-fargate
   - structuring-fastapi-for-fargate
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Structuring Next.js Server for Fargate
@@ -251,7 +251,7 @@ The singleton pattern prevents creating multiple `PrismaClient` instances during
 
 ### Pool Sizing
 
-Prisma's default connection pool limit is 5 (via the `connection_limit` query parameter on the URL). With Fargate autoscaling, if you run 10 tasks with a pool of 5 each, you consume 50 database connections. Size the pool relative to your RDS `max_connections` and expected task count:
+Prisma's default connection pool size in Prisma 5+ is `num_cpus * 2 + 1` (previously a fixed default of 5). You can override it via the `connection_limit` query parameter on the URL. With Fargate autoscaling, if you run 10 tasks with a pool of 5 each, you consume 50 database connections. Size the pool relative to your RDS `max_connections` and expected task count:
 
 ```
 DATABASE_URL=postgresql://user:pass@host:5432/db?connection_limit=3&pool_timeout=10
@@ -312,7 +312,7 @@ The standard multi-stage Dockerfile for Next.js standalone output follows this p
 
 Key considerations:
 
-- Use `node:20-alpine` or `node:22-alpine` for the runner stage (small image, fast pull)
+- Use `node:22-alpine` for the runner stage (small image, fast pull)
 - Copy `.next/standalone` as the application root
 - Copy `.next/static` into `.next/standalone/.next/static`
 - Copy `public` into `.next/standalone/public`

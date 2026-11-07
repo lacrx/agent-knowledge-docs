@@ -15,7 +15,7 @@ summary: >
 references:
   - skills/setup-python-aws-tests.md
   - articles/ai-ml/bedrock-llm-integration.md
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Integrate AWS Bedrock LLM
@@ -430,10 +430,10 @@ python -m pytest test_bedrock_client.py -v
 
 ```bash
 # If using requirements.txt
-echo "boto3>=1.34.0" >> requirements.txt
+echo "boto3>=1.35.0" >> requirements.txt
 
 # If using pyproject.toml, add to the dependencies list
-# "boto3>=1.34.0"
+# "boto3>=1.35.0"
 ```
 
 ### Step 8: Verify credentials and run the example

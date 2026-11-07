@@ -19,7 +19,7 @@ aliases:
   - ml platform aws
 related:
   - bedrock-llm-integration
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # SageMaker ML Platform
@@ -29,6 +29,8 @@ last-updated: 2026-06-25
 AWS SageMaker is a managed ML platform that handles the infrastructure for training models, storing artifacts, registering model versions, and deploying inference endpoints. Unlike Bedrock, which provides access to pre-built foundation models via API, SageMaker is for teams that train, fine-tune, or serve their own models and need control over the compute, data pipeline, and deployment lifecycle.
 
 The platform spans multiple AWS services under one umbrella: S3 for artifact storage, ECR for container images, IAM for access control, CloudWatch for monitoring, and SageMaker-specific resources like training jobs, model packages, and endpoints. Understanding which pieces you actually need -- and in what order to provision them -- is the difference between a clean ML platform and a tangled mess of permissions and orphaned resources.
+
+SageMaker also includes higher-level services built on top of the core platform: **SageMaker Studio** provides a web-based IDE for ML development and experimentation; **JumpStart** offers pre-trained models and solution templates for common ML tasks; and **Canvas** enables no-code ML model building for business analysts. This article focuses on the core infrastructure components. See the AWS documentation for Studio, JumpStart, and Canvas specifics.
 
 This article covers the architectural decisions, environment design, and operational boundaries you need to think through before writing Terraform. The companion skills handle the actual provisioning.
 
@@ -106,7 +108,7 @@ Use separate prefixes (not separate buckets) for training data, model artifacts,
 
 SageMaker training jobs run inside Docker containers. You have three options:
 
-1. **AWS pre-built images** -- For standard frameworks (PyTorch, TensorFlow, XGBoost). AWS maintains these and publishes image URIs per region.
+1. **AWS pre-built images** -- For standard frameworks (PyTorch, TensorFlow, XGBoost, Hugging Face). AWS maintains these and publishes image URIs per region.
 2. **Extended images** -- Start from a pre-built image, add your dependencies. Best balance of convenience and control.
 3. **Bring your own container (BYOC)** -- Full custom Dockerfile. Required for non-standard frameworks or proprietary code.
 
@@ -181,6 +183,10 @@ resource "aws_sagemaker_training_job" "example" {
     max_runtime_in_seconds = 3600
   }
 }
+
+# Note: Training jobs are ephemeral and not typically managed as Terraform resources.
+# The HCL above shows the parameter shape, but jobs are launched via the SageMaker
+# API/SDK (e.g., boto3 create_training_job) rather than terraform apply.
 ```
 
 ### Instance Selection
@@ -191,7 +197,8 @@ resource "aws_sagemaker_training_job" "example" {
 | ml.c5 | CPU-intensive training | Yes | Feature engineering, XGBoost |
 | ml.p3 / ml.p4d | GPU training, deep learning | Yes (with interruptions) | Expensive; use spot for experimentation |
 | ml.g5 | GPU inference + training | Yes | Good price-performance for medium models |
-| ml.trn1 | Large-scale training (Trainium) | No | AWS custom silicon, best for large models |
+| ml.p5 | GPU training, large models (H100) | Yes (with interruptions) | Available since 2024; highest GPU performance for large-scale training |
+| ml.trn1 | Large-scale training (Trainium) | No | AWS custom silicon, best for large models; ml.trn2 (Trainium2) also available for next-gen workloads |
 
 **Use spot instances for dev/experimentation.** They save 60-90% but can be interrupted. Set checkpointing so training can resume. Never use spot for production training runs that must complete on a deadline.
 
@@ -352,7 +359,7 @@ In Terraform, steps 1-5 are infrastructure that rarely changes. Steps 6-9 are op
 
 ## References
 
-- AWS SageMaker Developer Guide: `docs.aws.amazon.com/sagemaker/latest/dg/`
-- Terraform AWS Provider — SageMaker resources: `registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sagemaker_domain`
-- SageMaker Pricing: `aws.amazon.com/sagemaker/pricing/`
-- SageMaker Built-in Container Images: `docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html`
+- [AWS SageMaker Developer Guide](https://docs.aws.amazon.com/sagemaker/latest/dg/)
+- [Terraform AWS Provider — SageMaker resources](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sagemaker_domain)
+- [SageMaker Pricing](https://aws.amazon.com/sagemaker/pricing/)
+- [SageMaker Built-in Container Images](https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html)

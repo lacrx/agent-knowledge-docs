@@ -16,7 +16,7 @@ aliases:
   - python test layers
 related:
   - testing-aws-services-with-moto
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Python Integration Testing Patterns

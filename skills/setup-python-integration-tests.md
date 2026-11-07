@@ -16,7 +16,7 @@ references:
   - skills/scaffold-python-project.md
   - skills/setup-python-aws-tests.md
   - articles/testing/python-integration-testing-patterns.md
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Set Up Python Integration Tests
@@ -226,7 +226,7 @@ services:
       retries: 5
 
   localstack:
-    image: localstack/localstack:3
+    image: localstack/localstack:4
     ports:
       - "4566:4566"
     environment:

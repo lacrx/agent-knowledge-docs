@@ -16,7 +16,7 @@ aliases:
   - cloudwatch metrics alarms
 related:
   - loki-query-troubleshooting
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # AWS CloudWatch Logging and Monitoring

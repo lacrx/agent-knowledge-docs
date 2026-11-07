@@ -19,7 +19,7 @@ related:
   - spec-based-development
   - claude-sdk-tools
   - anthropic-sdk-fastapi-tools
-last-updated: 2026-06-29
+last-updated: 2026-11-07
 ---
 
 # GitHub Copilot Python SDK — Building Agents with Tools
@@ -111,5 +111,5 @@ Access `session.session_id` after a conversation. Pass it to `client.resume_sess
 ## Related Articles
 
 - **[spec-based-development](spec-based-development.md)** — Write architecture and feature specs before coding; complements SDK-based agent workflows.
-- **[claude-agent-sdk-tools](claude-agent-sdk-tools.md)** — Equivalent guide for Claude Agent SDK.
+- **[claude-sdk-tools](claude-sdk-tools.md)** — Equivalent guide for Claude Agent SDK.
 - **[anthropic-sdk-fastapi-tools](anthropic-sdk-fastapi-tools.md)** — Build AI-powered APIs with Python FastAPI.

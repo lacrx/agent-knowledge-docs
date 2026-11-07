@@ -18,7 +18,7 @@ aliases:
   - fastapi project scaffolding
 related:
   - nextjs-project-scaffolding-aws
-last-updated: 2026-06-25
+last-updated: 2026-11-07
 ---
 
 # Python Project Scaffolding for AWS
