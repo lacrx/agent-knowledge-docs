@@ -359,11 +359,32 @@ def cmd_install(kbs, args):
     k = kb_by_name(SKILL_REPO, kbs)
     skill = raw(k["repo"], "skills/%s.md" % SKILL_NAME, k["branch"])
     script = raw(k["repo"], "scripts/kb.py", k["branch"])
+    refresher = raw(k["repo"], "scripts/kb-mirror-refresh", k["branch"])
     dest.mkdir(parents=True, exist_ok=True)
     (dest / "SKILL.md").write_text(skill)
     (dest / "kb").write_text(script)
     (dest / "kb").chmod(0o755)
+    (dest / "kb-mirror-refresh").write_text(refresher)
+    (dest / "kb-mirror-refresh").chmod(0o755)
     print("installed %s from %s@%s into %s" % (SKILL_NAME, k["repo"], k["branch"], dest))
+
+    # The mirror refresher is only useful on PATH, and only on a machine that reads
+    # the KBs through another host (no local gh credential). Install it alongside the
+    # user's other tools when that directory already exists; never create it.
+    binrc = Path.home() / ".local" / "bin"
+    if binrc.is_dir():
+        target = binrc / "kb-mirror-refresh"
+        try:
+            target.write_text(refresher)
+            target.chmod(0o755)
+            print("installed kb-mirror-refresh into %s" % binrc)
+        except OSError as exc:
+            print("could not install kb-mirror-refresh into %s: %s" % (binrc, exc))
+    else:
+        print("note: %s does not exist; kb-mirror-refresh left in %s only" % (binrc, dest))
+    if not _gh_local():
+        print("note: no local gh credential, so kb reads through another host. "
+              "Schedule kb-mirror-refresh so the fallback mirror stays fresh.")
 
 
 COMMANDS = {
