@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""Refresh neo's read-only KB mirror from workhorse.
+
+neo holds no GitHub credential by design, so it cannot read the private
+*-knowledge-docs repos itself. workhorse can. This pulls the current default
+branch of every KB through workhorse and stores it under ~/.cache/kb-mirror,
+so that when workhorse is unreachable -- the exact moment the lan KB matters
+most -- `kb` has something fresh to fall back to instead of failing.
+
+Uses the tarball API rather than workhorse's working trees on purpose: those
+sit on arbitrary branches (lan was on docs/session-state-capture, policy's
+default is master), so the checked-out state is not what we want to mirror.
+
+Read-only. Never writes to any repo. Stdlib only.
+"""
+
+import io
+import json
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+import tarfile
+import time
+
+OWNER = "lacrx"
+SUFFIX = "-knowledge-docs"
+MIRROR = pathlib.Path(os.environ.get("KB_MIRROR_DIR", pathlib.Path.home() / ".cache/kb-mirror"))
+HOST = os.environ.get("KB_MIRROR_HOST", "workhorse")
+SSH = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8", HOST]
+
+
+def wh(cmd, binary=False):
+    r = subprocess.run(SSH + [cmd], capture_output=True)
+    if r.returncode != 0:
+        msg = r.stderr.decode("utf-8", "replace").strip()
+        sys.exit("kb-mirror-refresh: %s unreachable or command failed: %s" % (HOST, msg))
+    return r.stdout if binary else r.stdout.decode("utf-8", "replace")
+
+
+def safe_extract(blob, dest):
+    """Extract a GitHub tarball, stripping its top-level <owner>-<repo>-<sha> dir."""
+    with tarfile.open(fileobj=io.BytesIO(blob), mode="r:gz") as tf:
+        for m in tf.getmembers():
+            if m.name.startswith("/") or ".." in pathlib.PurePosixPath(m.name).parts:
+                continue
+            if not (m.isfile() or m.isdir()):
+                continue  # skip links/devices
+            parts = m.name.split("/", 1)
+            if len(parts) < 2 or not parts[1]:
+                continue
+            m.name = parts[1]
+            try:
+                tf.extract(m, dest, filter="data")
+            except TypeError:  # Python < 3.12 has no filter=
+                tf.extract(m, dest)
+
+
+def main():
+    repos_json = wh("gh repo list %s --limit 200 --json name,defaultBranchRef,description" % OWNER)
+    try:
+        repos = json.loads(repos_json)
+    except json.JSONDecodeError:
+        sys.exit("kb-mirror-refresh: could not parse repo list from %s" % HOST)
+
+    kbs = [r for r in repos if r.get("name", "").endswith(SUFFIX)]
+    if not kbs:
+        sys.exit("kb-mirror-refresh: no %s repos found" % SUFFIX)
+
+    MIRROR.mkdir(parents=True, exist_ok=True)
+    (MIRROR / "repos.json").write_text(repos_json)
+
+    for r in kbs:
+        name = r["name"]
+        branch = (r.get("defaultBranchRef") or {}).get("name") or "main"
+        dest = MIRROR / name
+        shafile = MIRROR / (name + ".sha")
+
+        # Skip the tarball entirely when HEAD has not moved. Each KB is several MB
+        # and they change rarely, so a scheduled refresh should normally be a few
+        # cheap API calls, not ~15 MB over the LAN.
+        sha = wh("gh api repos/%s/%s/commits/%s --jq .sha" % (OWNER, name, branch)).strip()
+        if sha and dest.is_dir():
+            try:
+                if shafile.read_text().strip() == sha:
+                    print("unchanged  %-26s @ %s" % (name, branch))
+                    continue
+            except OSError:
+                pass
+
+        blob = wh("gh api repos/%s/%s/tarball/%s" % (OWNER, name, branch), binary=True)
+
+        tmp = MIRROR / (name + ".new")
+        if tmp.exists():
+            shutil.rmtree(tmp)
+        tmp.mkdir(parents=True)
+        safe_extract(blob, tmp)
+        if dest.exists():
+            shutil.rmtree(dest)
+        tmp.rename(dest)
+        if sha:
+            shafile.write_text(sha)
+        print("mirrored   %-26s @ %s" % (name, branch))
+
+    (MIRROR / ".fetched").write_text(str(int(time.time())))
+    print("mirror fresh: %s" % MIRROR)
+
+
+if __name__ == "__main__":
+    main()

@@ -62,6 +62,62 @@ def _gh_local() -> bool:
     return _GH_LOCAL
 
 
+# ------------------------------------------------------- mirror fallback
+
+# neo holds no GitHub credential by design, so it reads the KBs through
+# workhorse. When workhorse is down -- the exact moment the lan KB matters most
+# -- fall back to the read-only mirror that kb-mirror-refresh keeps locally,
+# rather than failing. Always say so, and say how old it is: a silently stale
+# doc is worse than no doc.
+
+MIRROR_DIR = Path(os.environ.get("KB_MIRROR_DIR", Path.home() / ".cache/kb-mirror"))
+CONTENTS_RE = re.compile(r"^repos/([^/]+)/([^/]+)/contents/(.+?)(?:\?ref=(.*))?$")
+_MIRROR_WARNED = False
+
+
+def _mirror_age_warn():
+    global _MIRROR_WARNED
+    if _MIRROR_WARNED:
+        return
+    _MIRROR_WARNED = True
+    try:
+        age = time.time() - int((MIRROR_DIR / ".fetched").read_text().strip())
+        when = "%d min" % (age / 60) if age < 86400 else "%.1f days" % (age / 86400)
+    except (OSError, ValueError):
+        when = "unknown age"
+    sys.stderr.write(
+        "kb: GitHub and workhorse both unreachable; serving from the local mirror "
+        "(refreshed %s ago). Content may be stale -- verify anything load-bearing "
+        "on the machine itself. Run kb-mirror-refresh once workhorse is back.\n" % when
+    )
+
+
+def _mirror_serve(args: list):
+    """Serve the two gh call shapes kb uses from the mirror, or None."""
+    if not MIRROR_DIR.is_dir():
+        return None
+    if args and args[0] == "repo" and len(args) > 1 and args[1] == "list":
+        try:
+            text = (MIRROR_DIR / "repos.json").read_text()
+        except OSError:
+            return None
+        _mirror_age_warn()
+        return text
+    if args and args[0] == "api":
+        for a in args:
+            m = CONTENTS_RE.match(a)
+            if not m:
+                continue
+            _, repo, path, _branch = m.groups()
+            try:
+                text = (MIRROR_DIR / repo / path).read_text()
+            except OSError:
+                return None
+            _mirror_age_warn()
+            return text
+    return None
+
+
 def gh(args: list) -> str:
     """Run gh locally, or on workhorse over ssh when gh isn't available here."""
     if _gh_local():
@@ -71,6 +127,9 @@ def gh(args: list) -> str:
         cmd = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8", "workhorse", "gh " + quoted]
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode != 0:
+        served = _mirror_serve(args)
+        if served is not None:
+            return served
         raise KbError(res.stderr.strip() or "gh failed: " + " ".join(args))
     return res.stdout
 
