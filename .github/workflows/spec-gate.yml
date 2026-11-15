@@ -45,7 +45,7 @@ jobs:
           BODY: ${{ github.event.pull_request.body }}
         run: printf '%s' "${BODY:-}" > "${RUNNER_TEMP}/pr-body.txt"
 
-      - uses: lacrx/spec-check@90aaf7670d4801f4eff4f7a4392328b753c68a33  # 2026-11-15, whole tier model in the block
+      - uses: lacrx/spec-check@8726b2a3aad1d70d41b7e09a0f3e90200ece218b  # 2026-11-15, copy detection
         with:
           body-file: ${{ runner.temp }}/pr-body.txt
           title: ${{ github.event.pull_request.title }}
