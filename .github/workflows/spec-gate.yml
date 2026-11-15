@@ -1,0 +1,55 @@
+# The record a change carries about itself, checked mechanically, on every pull request.
+#
+# The checker is one implementation, in `lacrx/spec-check` (public), consumed here as an
+# action **pinned to a commit sha**. A tag can move, and this decides whether a change is
+# ready to merge. `spec-pin-check` on workhorse says when this pin has fallen behind the
+# tool's main; bumping it is a deliberate edit, not an automatic one.
+#
+# `edited` is in the trigger list because the pull request BODY is the record. A body edited
+# after the gate ran would otherwise keep a green tick earned by text that is no longer there.
+#
+# What the gate wants: `Why:` (what was observed), `Rule:` (the invariant now true) and
+# `Verified:` (the command and its result), plus a `Spec:` trailer naming a spec file,
+# `in-message`, or `none (<reason>)`. It counts facts, never style, so terse prose passes.
+# Tier 2 wants a spec file; this repository's tier-2 list comes from `.spec-tier2` if it has
+# one, else a review workflow's `paths:` block, else the tool's built-in defaults.
+name: Spec gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+concurrency:
+  group: spec-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  spec-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # The tier is decided by what the merge would bring in, which needs the base branch
+          # in the clone. At depth 1 every change looks like it touched nothing.
+          fetch-depth: 0
+
+      - name: Write the body to a file
+        env:
+          # **Through the environment, never interpolated into the script.** A title or body
+          # is attacker-controlled text, and `${{ }}` inside `run:` is substituted before
+          # bash sees the line, so a backtick in a body would execute on this runner.
+          BODY: ${{ github.event.pull_request.body }}
+        run: printf '%s' "${BODY:-}" > "${RUNNER_TEMP}/pr-body.txt"
+
+      - uses: lacrx/spec-check@0ee6b5520374dc3527c01795554c46471dcdb4a8  # 2026-11-14
+        with:
+          body-file: ${{ runner.temp }}/pr-body.txt
+          title: ${{ github.event.pull_request.title }}
+          base: ${{ github.event.pull_request.base.ref }}
+          # Cross-repository and machine-state changes keep their specs in the vault, which a
+          # runner cannot read and must not pretend to.
+          external-prefix: vault/
