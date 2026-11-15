@@ -45,7 +45,7 @@ jobs:
           BODY: ${{ github.event.pull_request.body }}
         run: printf '%s' "${BODY:-}" > "${RUNNER_TEMP}/pr-body.txt"
 
-      - uses: lacrx/spec-check@0ee6b5520374dc3527c01795554c46471dcdb4a8  # 2026-11-14
+      - uses: lacrx/spec-check@42dccb2455db1341d74f9e259190132728f24af1  # 2026-11-14, union semantics
         with:
           body-file: ${{ runner.temp }}/pr-body.txt
           title: ${{ github.event.pull_request.title }}
