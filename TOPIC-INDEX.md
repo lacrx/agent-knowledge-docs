@@ -20,6 +20,12 @@ Aliases: claude agent sdk python, claude agent sdk, claude agent tools
 Skills: build-copilot-sdk-agent
 Aliases: copilot sdk python, github copilot sdk, copilot agent tools
 
+## agent-workflow / ai-development / developer-experience
+
+**instruction-file-design** → [instruction-file-design](articles/agent-workflow/instruction-file-design.md)
+Skills: consult-knowledge-bases
+Aliases: claude md design, agent instruction files, agents md structure
+
 ## agent-workflow / specification-driven / ai-development / developer-experience
 
 **spec-based-development** → [spec-based-development](articles/agent-workflow/spec-based-development.md)
