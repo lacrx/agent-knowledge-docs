@@ -12,8 +12,8 @@ topics:
 summary: >
   Advisory guide for CLAUDE.md and other agent instruction files — route a fact by what it is
   about rather than by who found it, move subsystem detail into skills that load on match and
-  file-scoped boundaries into rules that fire on a path, and gate the size mechanically so the
-  file cannot grow back.
+  file-scoped boundaries into rules that fire on a path (per repo, or per user for what every
+  repo shares), and gate the size mechanically so the file cannot grow back.
 aliases:
   - claude md design
   - claude.md
@@ -63,6 +63,7 @@ prose. All three keep the same material in the same position. Route it instead:
 | Something outside the repository — a vendor API, hardware, a protocol, a container runtime | a knowledge base, referenced and **never restated** | it is true for anyone, outlives this codebase, and is reusable by every other project |
 | One subsystem of this code | a skill in the repo (`.claude/skills/<name>/SKILL.md`) | it versions with the code, and loads only when its description matches |
 | A rule that only matters while one particular file is open | a path-scoped rule (`.claude/rules/<name>.md` with a `paths:` list) | the harness injects it when a read or write touches a matching path, so no model has to judge it relevant |
+| The same, but true of **every** repository on the machine | a user-level path-scoped rule (`~/.claude/rules/<name>.md`) | it fires the same way in any project, so a cross-repo rule needs no copy per repo |
 | The change being made now — what was observed, the invariants, the blast radius | a spec file next to the code | it is the record of a decision, not a standing rule |
 | A symptom somebody will hit and misdiagnose | a `PAINPOINTS.md` indexed by the symptom | you arrive with a symptom, not a subsystem name |
 | A rule that holds across subsystems, or a boundary | the instruction file | this is what it is for |
@@ -125,6 +126,7 @@ The split that still applies is by **mechanism**, not by sensitivity:
 | What it is | Where | Why |
 |---|---|---|
 | A boundary that only matters while a particular file is open | a path-scoped rule | it fires on the path; nothing judges it relevant |
+| A boundary of that kind that holds in every repository | a **user-level** path-scoped rule | one copy, every project; see the section below |
 | A subsystem narrative somebody reads while working on it | a skill | a missed load costs context, not a guarantee |
 | A boundary somebody must know **before** they open anything | the instruction file, in one sentence | nothing can inject it, because there is no path yet |
 
@@ -139,6 +141,31 @@ credential file.
 Getting this wrong in the other direction is easy and worth watching for: a verbatim move
 leaves the invariant in *both* places, which is the duplication the whole exercise exists to
 remove. Grep the destination for what the instruction file claims to own.
+
+### Path-scoped rules come in two scopes, and the machine-wide one is easy to miss
+
+A `paths:` rule can live in the repository (`.claude/rules/`) or in the user's own config
+(`~/.claude/rules/`). **Both fire the same way; the user-level one fires in every project.**
+That is the right home for a rule about the toolchain rather than the code: how the agent's own
+settings are rendered, where a fact goes when you are editing an instruction file, how a
+repository's review-and-spec configuration is assembled. Those are true of twenty repositories,
+and a per-repo rule would be twenty copies of one fact — the defect this whole article is about.
+
+Three things worth knowing before relying on it:
+
+- **It is per-user, so it does not travel with the code.** A teammate cloning the repository
+  gets the repo rules and none of the user-level ones. Use it for rules about *your* machines
+  and toolchain, not for anything a contributor needs.
+- **On more than one machine, put the files in whatever already syncs and symlink to them.**
+  In the measured case `~/.claude/rules` is a symlink into the synced vault directory, beside
+  the shared memories and agent definitions, which was already the pattern for those.
+  **Verified that rules load through the symlink** before anything was moved into one — that
+  was the risk worth retiring first, and the second machine needed the symlink created by hand.
+- **A machine-wide rule and a repo rule can both fire on one read.** Keep their contents
+  disjoint, or you have reintroduced the duplication one layer up. In the measured case the
+  cross-repo layer holds how a tier is assembled and the repo layer holds that repository's own
+  tier-2 list, with the generated table staying in the always-loaded file because it is needed
+  when writing any commit message and that touches no file at all.
 
 ### Prove the mechanism before you trust it, with a negative control
 
@@ -248,12 +275,15 @@ is still true. Three habits cover the rest:
 - **Condensing is not moving, and should be decided separately.** Moves are mechanically
   verifiable; rewriting prose shorter is judgment, and what gets lost is usually the
   measurement that made a rule something other than arbitrary. The measured case ended at
-  **33.8 KB from 211 KB, 84% gone, entirely by moving** — but it passed through a stage where
-  the gate's comment recorded that its 40 KB target was "not reachable by this route", with
-  108 KB left. That was true of the route it named and false as the sentence it reads as: the
-  remaining material was the file-scoped boundaries, and the mechanism for those had not been
-  found yet. Record *which* route you measured, or a limit on your reading becomes a limit on
-  the problem.
+  **24 KB from 211 KB, 89% gone, entirely by moving** — but it passed through two stages whose
+  figures were each written down as the end of the road. The gate's comment recorded a 40 KB
+  target as "not reachable by this route" with 108 KB left, which was true of the route it
+  named and false as the sentence it reads as; the remaining material was the file-scoped
+  boundaries and the mechanism for those had not been found yet. Then at 33.8 KB the remainder
+  was called "genuinely cross-cutting", which was wrong about four sections because they were
+  judged by their titles rather than by which files they are about — the only question a
+  `paths:` list can act on. Record *which* route you measured, and expect the number to move
+  again when you find a mechanism you did not know.
 - **A dozen destinations is a different cognitive load from one file.** It is better than
   2,700 lines, but a reader now has to know the map. A routing table at the top of the
   instruction file ("where a new fact goes", "what to read when") is the cheapest fix and
