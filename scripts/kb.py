@@ -253,17 +253,91 @@ def quick_ref(kb: dict) -> str:
     return _cached(kb["kb"] + "-QUICK-REF.md", INDEX_TTL, lambda: raw(kb["repo"], "QUICK-REF.md", kb["branch"]))
 
 
-def route(task: str, kbs: list, fetch_index=quick_ref) -> list:
-    """For each KB: matched When-to-Fetch topics and the QUICK-REF rows the task touches."""
+def topic_index(kb: dict) -> str:
+    """TOPIC-INDEX.md, which carries each entry's `aliases` and QUICK-REF does not.
+
+    Cached on the same TTL as QUICK-REF, so routing costs one extra request per KB per ten
+    minutes rather than one per call.
+    """
+    return _cached(kb["kb"] + "-TOPIC-INDEX.md", INDEX_TTL,
+                   lambda: raw(kb["repo"], "TOPIC-INDEX.md", kb["branch"]))
+
+
+def parse_aliases(topic_index_text: str) -> list:
+    """Entries from TOPIC-INDEX.md as dicts: aliases, paths.
+
+    **The aliases are the half of an article's routing vocabulary that nothing read.** Every
+    article declares `aliases:` for the phrasings somebody would actually type --
+    `generate_topic_index.py` has written them into this file since it was created, 24 of 28
+    articles carry them, and `route` matched only `topics`. So an article was reachable by the
+    words its author chose as taxonomy and not by the words a reader uses, and the miss was
+    silent: `route` answers "no knowledge base covers this task", which reads as an absence of
+    knowledge rather than a vocabulary gap. Same shape as a tool description that omits one of
+    its arguments.
+
+    The format is a `**name** -> [text](path)` line, optionally followed by `Skills:` and
+    `Aliases:` lines, with entries separated by blank lines.
+    """
+    entries = []
+    cur = None
+    for line in topic_index_text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("**"):
+            paths = []
+            for pth in LINK.findall(line):
+                if pth not in paths:
+                    paths.append(pth)
+            cur = {"aliases": [], "paths": paths}
+            entries.append(cur)
+        elif cur is not None and stripped.lower().startswith("aliases:"):
+            tail = stripped.split(":", 1)[1]
+            cur["aliases"] = [a.strip().lower() for a in tail.split(",") if a.strip()]
+    return [e for e in entries if e["paths"]]
+
+
+def route(task: str, kbs: list, fetch_index=quick_ref, fetch_aliases=topic_index) -> list:
+    """For each KB: matched When-to-Fetch topics, and the pages the task touches.
+
+    A page is reached by its QUICK-REF **tags** or by its declared **aliases**, which are the
+    phrasings its author expected a reader to use. Matching only tags meant a page was findable
+    by its taxonomy and not by its vocabulary; see `parse_aliases`.
+
+    `fetch_aliases` may raise -- a KB whose TOPIC-INDEX cannot be read still routes on tags,
+    because losing the whole KB over a missing index would be worse than the gap this closes.
+    """
     task_norm = _norm(task)
     results = []
     for kb in kbs:
         gate = [t for t in kb["topics"] if term_in(t, task_norm)]
+
+        try:
+            alias_hits = {}
+            for entry in parse_aliases(fetch_aliases(kb)):
+                hits = [a for a in entry["aliases"] if term_in(a, task_norm)]
+                if hits:
+                    for pth in entry["paths"]:
+                        alias_hits.setdefault(pth, []).extend(hits)
+        except KbError:
+            alias_hits = {}
+
         rows = []
+        seen = set()
         for row in parse_rows(fetch_index(kb)):
             hits = [t for t in row["tags"] if term_in(t, task_norm)]
+            # An alias match reaches the same row, so a page found both ways is listed once
+            # with both reasons rather than twice.
+            for pth in row["paths"]:
+                if pth in alias_hits:
+                    hits = hits + [a for a in alias_hits[pth] if a not in hits]
+                    seen.add(pth)
             if hits:
                 rows.append((len(hits), hits, row))
+
+        # An alias may name a page that has no QUICK-REF row of its own.
+        for pth, hits in alias_hits.items():
+            if pth not in seen:
+                rows.append((len(hits), hits, {"tags": [], "paths": [pth], "text": pth}))
+
         rows.sort(key=lambda r: -r[0])
         if gate or rows:
             results.append({"kb": kb, "gate": gate, "rows": rows[:MAX_ROUTE_ROWS]})
@@ -284,7 +358,18 @@ def cmd_route(kbs, args):
         raise KbError("usage: kb route \"<task text>\"")
     results = route(" ".join(args), kbs)
     if not results:
-        print("skip: no knowledge base covers this task (no When to Fetch topic or QUICK-REF tag matched)")
+        # **A dead end, made into a next step.** This used to print the skip line alone, which
+        # reads as "no knowledge base covers this" when what happened is "your words matched no
+        # topic or alias". `term_in` needs a whole phrase contiguously, so a natural sentence
+        # naming none of the vocabulary matches nothing however well covered the subject is.
+        # Reporting that as absence is the confident-negative failure this house keeps hitting:
+        # a search that answers "no matches found" with the file two directories down.
+        print("skip: your words matched no When to Fetch topic, QUICK-REF tag or alias.")
+        print("  This is a vocabulary miss, NOT proof the subject is uncovered -- matching needs")
+        print("  a whole phrase, so a sentence naming none of it matches nothing. Before")
+        print("  concluding \"not covered in KB\", try one noun from the task:")
+        print("    kb find <word>        rows mentioning <word> in every KB")
+        print("    kb toc <kb>           one line per page, to scan by eye")
         return
     for r in results:
         k = r["kb"]

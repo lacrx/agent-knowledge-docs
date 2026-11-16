@@ -24,7 +24,7 @@ Aliases: copilot sdk python, github copilot sdk, copilot agent tools
 
 **instruction-file-design** → [instruction-file-design](articles/agent-workflow/instruction-file-design.md)
 Skills: consult-knowledge-bases
-Aliases: claude md design, claude.md, agents.md, agent instruction files, agents md structure, instruction file size, context window cost, project skills, skills vs claude md, painpoints file, path scoped rules, claude rules directory, rules vs skills, paths frontmatter
+Aliases: claude md design, claude.md, agents.md, agent instruction files, agents md structure, instruction file size, context window cost, project skills, skills vs claude md, painpoints file, path scoped rules, claude rules directory, rules vs skills, paths frontmatter, machine wide rule, user level rules, every repository, where a fact goes, instruction file is too big
 
 ## agent-workflow / specification-driven / ai-development / developer-experience
 
