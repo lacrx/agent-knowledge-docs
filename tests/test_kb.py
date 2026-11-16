@@ -91,23 +91,80 @@ def _kbs():
     ]
 
 
+TOPIC_INDEX = """# Topic Index
+
+**ssh** → [ssh](articles/networking/ssh.md)
+Aliases: remote login, key based auth
+
+**vm-setup** → [vm-setup](articles/vm/setup.md)
+Skills: none
+Aliases: virtual machine, libvirt guest
+"""
+
+
+class TestParseAliases:
+    def test_entries_and_aliases(self):
+        got = kb.parse_aliases(TOPIC_INDEX)
+        assert [e["paths"] for e in got] == [["articles/networking/ssh.md"], ["articles/vm/setup.md"]]
+        assert got[0]["aliases"] == ["remote login", "key based auth"]
+        assert got[1]["aliases"] == ["virtual machine", "libvirt guest"]
+
+    def test_entry_without_aliases_is_kept_with_none(self):
+        got = kb.parse_aliases("**solo** → [solo](articles/solo.md)\n")
+        assert got == [{"aliases": [], "paths": ["articles/solo.md"]}]
+
+    def test_entry_without_a_link_is_dropped(self):
+        assert kb.parse_aliases("**nolink** no link here\nAliases: a, b\n") == []
+
+
 class TestRoute:
     def fetch(self, k):
         return QUICK_REF if k["kb"] == "lan" else "| Topics | Article | Skills |\n|---|---|---|\n"
 
+    def aliases(self, k):
+        return TOPIC_INDEX if k["kb"] == "lan" else "# Topic Index\n"
+
+    def test_an_alias_reaches_a_page_no_tag_would(self):
+        """The defect this channel closes: a phrasing that names no topic found nothing."""
+        res = kb.route("set up a libvirt guest", _kbs(),
+                       fetch_index=self.fetch, fetch_aliases=self.aliases)
+        assert [r["kb"]["kb"] for r in res] == ["lan"]
+        paths = [row[2]["paths"] for row in res[0]["rows"]]
+        assert ["articles/vm/setup.md"] in paths
+        hits = [h for row in res[0]["rows"] for h in row[1]]
+        assert "libvirt guest" in hits
+
+    def test_a_page_matched_both_ways_is_listed_once_with_both_reasons(self):
+        res = kb.route("harden ssh with key based auth", _kbs(),
+                       fetch_index=self.fetch, fetch_aliases=self.aliases)
+        ssh_rows = [r for r in res[0]["rows"] if r[2]["paths"] == ["articles/networking/ssh.md"]]
+        assert len(ssh_rows) == 1
+        assert "ssh" in ssh_rows[0][1] and "key based auth" in ssh_rows[0][1]
+
+    def test_an_unreadable_topic_index_does_not_lose_the_kb(self):
+        def boom(_k):
+            raise kb.KbError("no TOPIC-INDEX")
+        res = kb.route("harden ssh keys on workhorse", _kbs(),
+                       fetch_index=self.fetch, fetch_aliases=boom)
+        assert [r["kb"]["kb"] for r in res] == ["lan"]
+        assert res[0]["gate"] == ["ssh", "workhorse"]
+
     def test_gate_and_rows(self):
-        res = kb.route("harden ssh keys on workhorse", _kbs(), fetch_index=self.fetch)
+        res = kb.route("harden ssh keys on workhorse", _kbs(), fetch_index=self.fetch,
+                       fetch_aliases=self.aliases)
         assert [r["kb"]["kb"] for r in res] == ["lan"]
         assert res[0]["gate"] == ["ssh", "workhorse"]
         assert res[0]["rows"][0][2]["paths"] == ["articles/networking/ssh.md"]
 
     def test_policy_gate_without_rows(self):
-        res = kb.route("does SB 79 allow this project", _kbs(), fetch_index=self.fetch)
+        res = kb.route("does SB 79 allow this project", _kbs(), fetch_index=self.fetch,
+                       fetch_aliases=self.aliases)
         assert [r["kb"]["kb"] for r in res] == ["policy"]
         assert res[0]["rows"] == []
 
     def test_skip(self):
-        assert kb.route("write a haiku about autumn", _kbs(), fetch_index=self.fetch) == []
+        assert kb.route("write a haiku about autumn", _kbs(), fetch_index=self.fetch,
+                        fetch_aliases=self.aliases) == []
 
 
 class TestTopicCap:

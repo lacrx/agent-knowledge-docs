@@ -29,6 +29,11 @@ aliases:
   - claude rules directory
   - rules vs skills
   - paths frontmatter
+  - machine wide rule
+  - user level rules
+  - every repository
+  - where a fact goes
+  - instruction file is too big
 skills:
   - consult-knowledge-bases
 last-updated: 2026-11-16
