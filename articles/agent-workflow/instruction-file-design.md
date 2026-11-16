@@ -2,6 +2,9 @@
 title: Instruction File Design
 topics:
   - agent-workflow
+  - claude-md
+  - instruction-files
+  - context-management
   - ai-development
   - developer-experience
 summary: >
@@ -10,8 +13,15 @@ summary: >
   and gate the size mechanically so the file cannot grow back.
 aliases:
   - claude md design
+  - claude.md
+  - agents.md
   - agent instruction files
   - agents md structure
+  - instruction file size
+  - context window cost
+  - project skills
+  - skills vs claude md
+  - painpoints file
 skills:
   - consult-knowledge-bases
 last-updated: 2026-11-16
