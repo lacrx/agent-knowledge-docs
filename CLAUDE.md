@@ -1,7 +1,7 @@
 # Knowledge Base Agent Instructions
 
 ## When to Fetch
-Only fetch KB content when the task involves: python, testing, agent-workflow, docker, fastapi, aws, fargate, claude-md, instruction-files, context-management.
+Only fetch KB content when the task involves: python, testing, agent-workflow, docker, fastapi, aws, fargate, claude-md, instruction-files, context-management, agent-skills, path-scoped-rules.
 If the task does not involve these topics, skip KB lookup entirely.
 
 ## How to Fetch
