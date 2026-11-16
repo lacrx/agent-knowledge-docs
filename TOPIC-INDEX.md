@@ -20,11 +20,11 @@ Aliases: claude agent sdk python, claude agent sdk, claude agent tools
 Skills: build-copilot-sdk-agent
 Aliases: copilot sdk python, github copilot sdk, copilot agent tools
 
-## agent-workflow / claude-md / instruction-files / context-management / ai-development / developer-experience
+## agent-workflow / claude-md / instruction-files / context-management / agent-skills / path-scoped-rules / ai-development / developer-experience
 
 **instruction-file-design** → [instruction-file-design](articles/agent-workflow/instruction-file-design.md)
 Skills: consult-knowledge-bases
-Aliases: claude md design, claude.md, agents.md, agent instruction files, agents md structure, instruction file size, context window cost, project skills, skills vs claude md, painpoints file
+Aliases: claude md design, claude.md, agents.md, agent instruction files, agents md structure, instruction file size, context window cost, project skills, skills vs claude md, painpoints file, path scoped rules, claude rules directory, rules vs skills, paths frontmatter
 
 ## agent-workflow / specification-driven / ai-development / developer-experience
 

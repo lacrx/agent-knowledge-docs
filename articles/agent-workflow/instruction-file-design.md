@@ -5,12 +5,15 @@ topics:
   - claude-md
   - instruction-files
   - context-management
+  - agent-skills
+  - path-scoped-rules
   - ai-development
   - developer-experience
 summary: >
   Advisory guide for CLAUDE.md and other agent instruction files — route a fact by what it is
-  about rather than by who found it, move subsystem detail into skills that load on match,
-  and gate the size mechanically so the file cannot grow back.
+  about rather than by who found it, move subsystem detail into skills that load on match and
+  file-scoped boundaries into rules that fire on a path, and gate the size mechanically so the
+  file cannot grow back.
 aliases:
   - claude md design
   - claude.md
@@ -22,6 +25,10 @@ aliases:
   - project skills
   - skills vs claude md
   - painpoints file
+  - path scoped rules
+  - claude rules directory
+  - rules vs skills
+  - paths frontmatter
 skills:
   - consult-knowledge-bases
 last-updated: 2026-11-16
@@ -55,6 +62,7 @@ prose. All three keep the same material in the same position. Route it instead:
 |---|---|---|
 | Something outside the repository — a vendor API, hardware, a protocol, a container runtime | a knowledge base, referenced and **never restated** | it is true for anyone, outlives this codebase, and is reusable by every other project |
 | One subsystem of this code | a skill in the repo (`.claude/skills/<name>/SKILL.md`) | it versions with the code, and loads only when its description matches |
+| A rule that only matters while one particular file is open | a path-scoped rule (`.claude/rules/<name>.md` with a `paths:` list) | the harness injects it when a read or write touches a matching path, so no model has to judge it relevant |
 | The change being made now — what was observed, the invariants, the blast radius | a spec file next to the code | it is the record of a decision, not a standing rule |
 | A symptom somebody will hit and misdiagnose | a `PAINPOINTS.md` indexed by the symptom | you arrive with a symptom, not a subsystem name |
 | A rule that holds across subsystems, or a boundary | the instruction file | this is what it is for |
@@ -98,20 +106,74 @@ Two rules make that safe:
   A skill whose description never matches is **worse** than inline text: the session proceeds
   not knowing the subsystem has rules at all.
 
-### A security invariant does not move
+### A security invariant needs a mechanism that fires, not one that is offered
 
-This is the exception that makes the rest safe. If a file sits behind a reviewer's path
-filter, whoever edits it must meet its boundary rule **without having invoked anything**.
+Whoever edits a file must meet its boundary rule **without having invoked anything**. That
+requirement is the right one and it is what rules out a skill: a skill is *offered* to the
+model as a description, and the model decides. For a boundary whose violation is silent,
+"probably loads" is not a mechanism.
 
-So split the entry rather than the subject: the *rule* stays in the instruction file, the
-*narrative* goes to the skill, and the skill carries a named pointer saying where the rule
-lives. In the measured case this applied to a page's escape-then-whitelist XSS invariant, a
-purchase guard, and a credential-storage decision — each one left behind deliberately while
-its investigation moved.
+**A path-scoped rule satisfies the requirement, so the invariant can move after all.** The
+earlier version of this article concluded that such an invariant "does not move", and that
+conclusion was correct given only the two destinations it knew about. It was a claim about the
+mechanisms the author had found, written in the confident present tense as a claim about the
+problem. Worth stating plainly, because the same shape is the most common defect this whole
+article is about.
+
+The split that still applies is by **mechanism**, not by sensitivity:
+
+| What it is | Where | Why |
+|---|---|---|
+| A boundary that only matters while a particular file is open | a path-scoped rule | it fires on the path; nothing judges it relevant |
+| A subsystem narrative somebody reads while working on it | a skill | a missed load costs context, not a guarantee |
+| A boundary somebody must know **before** they open anything | the instruction file, in one sentence | nothing can inject it, because there is no path yet |
+
+That last row is what keeps the instruction file from emptying out entirely. "Is this service
+reachable from the internet?" is a question asked before any file is opened, so the one-line
+answer belongs where it is always present; the reasoning behind it belongs in the rule. In the
+measured case six such sentences stayed: the authentication boundary, the page's XSS
+invariant, scope isolation, the unconditional restricted flag, the guard stopping a pull
+request from merging itself past the reviewer, and the single sanctioned writer of the
+credential file.
 
 Getting this wrong in the other direction is easy and worth watching for: a verbatim move
 leaves the invariant in *both* places, which is the duplication the whole exercise exists to
-remove. Grep the skill for what the instruction file claims to own.
+remove. Grep the destination for what the instruction file claims to own.
+
+### Prove the mechanism before you trust it, with a negative control
+
+A loading mechanism is a claim about the harness, and the only honest way to hold it is to
+test it. Before moving a thousand lines into path-scoped rules, the measured case wrote four
+throwaway rule files carrying sentinel strings and ran each in a fresh one-shot session:
+
+| Probe | What it establishes |
+|---|---|
+| a rule naming one exact file, then read that file | the mechanism injects at all |
+| a rule naming `dir/prefix*.ext`, then read a match | `*` globs are honoured |
+| a rule naming `dir/**`, then read something under it | `**` is honoured |
+| **all of the above present, read nothing** | **it does not inject unconditionally** |
+
+The fourth is the one that matters and the one most likely to be skipped. A mechanism that
+always injects is the instruction file with extra steps, and every positive probe passes
+identically either way. The same reasoning applies to a skill, where the check is that it
+appears in a fresh session's skill list — and in the measured case one skill had sat
+unloadable for two weeks because its file was named `skill.md` rather than `SKILL.md`, with
+its directory, frontmatter and contents all correct.
+
+Two further checks, both cheap and both caught something real:
+
+- **Every path in a `paths:` list must resolve to something that exists.** An entry matching
+  nothing is a rule that never fires, which is indistinguishable from a rule that does not
+  exist. This caught an instruction file that referred to `ask.py` throughout while the file
+  was two directories down at `app/agents/ask.py`.
+- **Check whether version control is even looking at the directory.** Where the harness reads
+  rules from a dotted directory, a `.gitignore` line excluding that directory means the move
+  is invisible to `git status` and absent from the commit. Git does not descend into an
+  excluded directory, so an un-ignore for something inside it is never consulted: the
+  exclusion has to be written against the directory's *contents* with an exception per shipped
+  subdirectory. In the measured case the first attempt committed an instruction file with 329
+  lines deleted and the destination absent from the diff, with every check passing because
+  every check read the working tree.
 
 ### Gate the size mechanically, and ratchet it down
 
@@ -185,14 +247,23 @@ is still true. Three habits cover the rest:
   never read it.
 - **Condensing is not moving, and should be decided separately.** Moves are mechanically
   verifiable; rewriting prose shorter is judgment, and what gets lost is usually the
-  measurement that made a rule something other than arbitrary. In the measured case the
-  original 40 KB target turned out to be unreachable by moving alone, and the remainder was
-  left at 108 KB with the gate's own comment recording *why* — rather than ratcheting toward
-  a number chosen before anybody had read what was left.
-- **Four or five skills is a different cognitive load from one file.** It is better than
+  measurement that made a rule something other than arbitrary. The measured case ended at
+  **33.8 KB from 211 KB, 84% gone, entirely by moving** — but it passed through a stage where
+  the gate's comment recorded that its 40 KB target was "not reachable by this route", with
+  108 KB left. That was true of the route it named and false as the sentence it reads as: the
+  remaining material was the file-scoped boundaries, and the mechanism for those had not been
+  found yet. Record *which* route you measured, or a limit on your reading becomes a limit on
+  the problem.
+- **A dozen destinations is a different cognitive load from one file.** It is better than
   2,700 lines, but a reader now has to know the map. A routing table at the top of the
   instruction file ("where a new fact goes", "what to read when") is the cheapest fix and
-  should be written at the same time as the first skill.
+  should be written at the same time as the first skill — **and it is itself a fact in two
+  places.** In the measured case the table listed six rules within minutes of the seventh
+  existing. Update it in the commit that adds the destination, not afterwards.
+- **A path-scoped rule is silent about itself.** Nobody reading the instruction file learns
+  that a boundary exists for a file they are not opening, which is why the one-sentence form
+  stays behind. The honest statement of the cost: a session asking a question without opening
+  the relevant file gets the answer and not the reasoning.
 - **This is advisory, not a framework.** No tooling is required beyond a shell line in the
   pre-merge script and a directory of markdown.
 
