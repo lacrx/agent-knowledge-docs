@@ -39,3 +39,12 @@ Thumbs.db
 
 # Act (local GitHub Actions runner)
 .github/local/
+
+# Backups
+# `.env` and `.env.*` above do not cover `.env.bak-<stamp>`, and `kb install` writes
+# `scripts/kb.py.bak-<epoch>` every time it runs. In `lacrx/assistant` a copy of `.env` made
+# while editing it was swept into a commit by `git add -A` on 2026-11-11 and the blob is still
+# in that history, which is why the ignore rule there is `*.bak` AND `*.bak-*` rather than
+# just the first. Same two lines here, before the same thing happens.
+*.bak
+*.bak-*
